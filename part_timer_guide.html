@@ -46,9 +46,9 @@
     }
 
     .container {
-      max-width: 480px;
+      max-width: 100%;
       margin: 0 auto;
-      padding: 0 16px 40px;
+      padding: 0 20px 40px;
     }
 
     /* Header */
@@ -94,10 +94,10 @@
     .reward-banner {
       background: var(--primary);
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 28px;
       color: var(--accent);
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       position: relative;
       overflow: hidden;
     }
@@ -133,7 +133,7 @@
     .step-card {
       background: white;
       border-radius: var(--radius);
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       overflow: hidden;
     }
@@ -142,8 +142,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 20px;
-      cursor: pointer;
+      padding: 22px 24px;
       transition: background 0.2s;
     }
 
@@ -182,13 +181,7 @@
     }
 
     .step-toggle {
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gray-300);
-      transition: transform 0.3s;
+      display: none;
     }
 
     .step-card.open .step-toggle {
@@ -196,8 +189,8 @@
     }
 
     .step-content {
-      display: none;
-      padding: 20px 20px 24px;
+      display: block;
+      padding: 24px 24px 28px;
       border-top: 1px solid var(--gray-100);
     }
 
@@ -207,16 +200,16 @@
 
     /* Check Item */
     .check-list {
-      margin-top: 16px;
+      margin-top: 20px;
     }
 
     .check-item {
       display: flex;
       gap: 12px;
-      padding: 16px;
+      padding: 18px;
       background: var(--gray-50);
       border-radius: var(--radius-sm);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .check-icon {
@@ -254,8 +247,8 @@
       background: var(--primary-light);
       border: 2px solid var(--primary);
       border-radius: var(--radius-sm);
-      padding: 20px;
-      margin-top: 16px;
+      padding: 22px;
+      margin-top: 20px;
     }
 
     .important-box.success {
@@ -288,10 +281,10 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 20px 16px;
+      padding: 24px 20px;
       background: var(--primary-light);
       border-radius: var(--radius-sm);
-      margin: 16px 0;
+      margin: 20px 0;
       flex-wrap: wrap;
     }
 
@@ -324,19 +317,8 @@
       background: linear-gradient(135deg, var(--primary-light) 0%, #FFF 100%);
       border: 2px solid var(--accent);
       border-radius: var(--radius-sm);
-      padding: 20px;
-      margin-top: 16px;
-      position: relative;
-    }
-
-    .script-box::before {
-      content: '💬';
-      position: absolute;
-      top: -12px;
-      left: 16px;
-      font-size: 20px;
-      background: white;
-      padding: 0 4px;
+      padding: 24px;
+      margin-top: 20px;
     }
 
     .script-box p {
@@ -349,12 +331,12 @@
     .comparison {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 16px;
+      gap: 12px;
+      margin-top: 20px;
     }
 
     .comparison-item {
-      padding: 16px;
+      padding: 18px;
       border-radius: var(--radius-sm);
       text-align: center;
     }
@@ -387,14 +369,14 @@
 
     /* Flow Steps */
     .flow-steps {
-      margin-top: 16px;
+      margin-top: 20px;
     }
 
     .flow-step {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
-      padding: 12px 0;
+      gap: 14px;
+      padding: 14px 0;
       position: relative;
     }
 
@@ -402,7 +384,7 @@
       content: '';
       position: absolute;
       left: 15px;
-      top: 44px;
+      top: 48px;
       bottom: 0;
       width: 2px;
       background: var(--gray-200);
@@ -436,6 +418,22 @@
     }
 
     /* FAQ */
+    .faq-section {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px dashed var(--gray-200);
+    }
+
+    .faq-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-700);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .faq-item {
       background: var(--gray-50);
       border-radius: var(--radius-sm);
@@ -443,12 +441,15 @@
       overflow: hidden;
     }
 
+    .faq-section .faq-item:first-of-type {
+      margin-top: 0;
+    }
+
     .faq-q {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 16px;
-      cursor: pointer;
+      padding: 18px;
       font-weight: 600;
       font-size: 14px;
     }
@@ -457,14 +458,20 @@
       background: var(--accent);
       color: var(--primary);
       font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
       font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      padding-bottom: 2px;
     }
 
     .faq-a {
-      display: none;
-      padding: 0 16px 16px;
+      display: block;
+      padding: 0 18px 18px;
       font-size: 14px;
       color: var(--gray-700);
       line-height: 1.7;
@@ -476,12 +483,12 @@
 
     /* Info Table */
     .info-table {
-      margin-top: 16px;
+      margin-top: 20px;
     }
 
     .info-row {
       display: flex;
-      padding: 14px 0;
+      padding: 16px 0;
       border-bottom: 1px solid var(--gray-100);
     }
 
@@ -506,9 +513,9 @@
     .contact-section {
       background: white;
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 28px;
       text-align: center;
-      margin-top: 24px;
+      margin-top: 28px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
@@ -529,7 +536,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 14px 20px;
+      padding: 16px 20px;
       border-radius: var(--radius-sm);
       font-size: 15px;
       font-weight: 600;
@@ -563,10 +570,10 @@
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      padding: 14px;
+      padding: 16px;
       background: var(--gray-50);
       border-radius: var(--radius-sm);
-      margin-top: 12px;
+      margin-top: 16px;
     }
 
     .tip-icon {
@@ -587,7 +594,7 @@
 
     /* Guide table */
     .guide-table {
-      margin-top: 16px;
+      margin-top: 20px;
       border-radius: var(--radius-sm);
       overflow: hidden;
       border: 1px solid var(--gray-200);
@@ -604,7 +611,7 @@
 
     .guide-q {
       width: 40%;
-      padding: 14px;
+      padding: 16px;
       background: var(--gray-50);
       font-size: 13px;
       color: var(--gray-700);
@@ -613,7 +620,7 @@
 
     .guide-a {
       flex: 1;
-      padding: 14px;
+      padding: 16px;
       font-size: 13px;
       color: var(--gray-700);
       background: white;
@@ -624,21 +631,13 @@
   <div class="container">
     <!-- Header -->
     <header class="header">
-      <span class="header-badge">🔥 알바하면서 추가 수입</span>
-      <h1><span>시급 2배</span> 챌린지</h1>
-      <p>쿠폰 나눠주고 추가 수익 받자!</p>
+      <span class="header-badge">🔥 알바하면서 월 최대 60만원 추가 수입</span>
+      <h1><span>패스오더</span> [시급 2배 챌린지] 가이드</h1>
     </header>
-
-    <!-- Reward Banner -->
-    <div class="reward-banner">
-      <p class="label">손님 1명 첫 주문 시</p>
-      <p class="amount">2,000원</p>
-      <p class="sub">한 달 최대 60만원까지!</p>
-    </div>
 
     <!-- STEP 1 -->
     <div class="step-card open">
-      <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-header" >
         <div class="step-number">1</div>
         <div class="step-title">
           <h3>쿠폰 수령 및 확인</h3>
@@ -687,7 +686,7 @@
 
     <!-- STEP 2 -->
     <div class="step-card">
-      <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-header" >
         <div class="step-number">2</div>
         <div class="step-title">
           <h3>리워드 적립 조건 ⭐</h3>
@@ -712,6 +711,42 @@
           <span class="condition-result">2,000원 적립!</span>
         </div>
 
+        <div class="check-list">
+          <div class="check-item">
+            <div class="check-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <strong>패스오더 주문 이력이 없는 손님</strong>
+              <span>기존에 패스오더를 통해 주문한 이력이 없는 손님이어야 해요</span>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <strong>내 쿠폰 QR로 유입</strong>
+              <span>다른 경로로 가입하면 내 실적으로 안 잡혀요</span>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <strong>첫 주문 완료</strong>
+              <span>가입만 하고 주문 안 하면 안 돼요</span>
+            </div>
+          </div>
+        </div>
+
         <div class="important-box warning">
           <div class="important-box-title">
             <span>⚠️</span> 꼭 기억하세요!
@@ -719,23 +754,27 @@
           <p>손님이 QR 찍고 <span class="highlight">30일 이내</span>에 첫 주문해야 성과로 인정돼요!</p>
         </div>
 
-        <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">
-            <span class="badge">Q</span>
-            손님이 "이미 패스오더 쓰고 있어요"라고 하면?
-          </div>
-          <div class="faq-a">
-            "아 그러시구나~ 혹시 주변에 패스오더 안 쓰시는 분 계시면 전달해주세요!" 하고 쿠폰 드리세요. 그분이 첫 주문하면 2,000원 받을 수 있어요! 😊
-          </div>
-        </div>
+        <div class="faq-section">
+          <div class="faq-section-title">💬 자주 묻는 질문</div>
 
-        <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">
-            <span class="badge">Q</span>
-            하루에 몇 명까지 가능해요?
+          <div class="faq-item" >
+            <div class="faq-q">
+              <span class="badge">Q</span>
+              손님이 "이미 패스오더 쓰고 있어요"라고 하면?
+            </div>
+            <div class="faq-a">
+              "혹시 주변에 패스오더 안 쓰시는 분 계시면 전달해주세요!" 하고 쿠폰 드려도 좋아요. 그분이 첫 주문하면 2,000원 받을 수 있어요! 😊
+            </div>
           </div>
-          <div class="faq-a">
-            하루 제한은 없어요! 대신 한 달 최대 300명까지. 한 달이면 <strong>최대 60만원</strong>까지 추가로 벌 수 있어요!
+
+          <div class="faq-item" >
+            <div class="faq-q">
+              <span class="badge">Q</span>
+              하루에 몇 명까지 가능해요?
+            </div>
+            <div class="faq-a">
+              하루 제한은 없어요! 대신 12월 한정 최대 300명까지 제한이 있어요. 한 달이면 <strong>최대 60만원</strong>까지 추가로 벌 수 있어요!
+            </div>
           </div>
         </div>
       </div>
@@ -743,7 +782,7 @@
 
     <!-- STEP 3 -->
     <div class="step-card">
-      <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-header" >
         <div class="step-number">3</div>
         <div class="step-title">
           <h3>쿠폰 전달하기</h3>
@@ -777,7 +816,7 @@
         </div>
 
         <div class="script-box">
-          <p>"다음에 오실 때, <strong>QR 찍고 앱으로 주문하시면 아메리카노 100원</strong>이에요!<br><br>손님이 첫 주문하시면 저도 소정의 리워드를 받을 수 있어요 😊"</p>
+          <p>"다음에 오실 때, <strong>QR 찍고 앱으로 주문하시면 아메리카노 100원</strong>이에요!<br>손님이 첫 주문하시면 저도 2,000원 리워드를 받을 수 있어요"</p>
         </div>
 
         <h4 style="font-size: 15px; margin: 24px 0 12px; font-weight: 700;">📱 손님 사용 방법</h4>
@@ -801,14 +840,14 @@
             <div class="flow-step-num">3</div>
             <div class="flow-step-content">
               <strong>맨 아래 버튼 클릭</strong>
-              <span>앱스토어로 이동</span>
+              <span>앱스토어/앱으로 이동</span>
             </div>
           </div>
           <div class="flow-step">
             <div class="flow-step-num">4</div>
             <div class="flow-step-content">
               <strong>앱 설치 & 가입</strong>
-              <span>이미 앱 있으면 바로 5번으로!</span>
+              <span>이미 앱 설치&amp;가입 되어있으면 바로 5번으로!</span>
             </div>
           </div>
           <div class="flow-step">
@@ -837,27 +876,39 @@
           </div>
           <div class="guide-row">
             <div class="guide-q">기한은 언제까지?</div>
-            <div class="guide-a">기한 넉넉하니까 다음에 오실 때 편하게 써주세요!</div>
+            <div class="guide-a">쿠폰 수량이 한정적이기에, 다음 주문 시에 바로 사용해주시면 좋아요!</div>
+          </div>
+          <div class="guide-row">
+            <div class="guide-q">왜 권유하는 거예요?</div>
+            <div class="guide-a">손님이 첫 주문하시면 저도 2,000원 리워드를 받을 수 있어요 😊</div>
+          </div>
+          <div class="guide-row">
+            <div class="guide-q">손님은 어떻게 사용해요?</div>
+            <div class="guide-a">QR 스캔 → 페이지 맨 아래 버튼 클릭 → 앱 설치 → 가입 → 첫 주문<br>앱 설치, 가입이 이미 되어있는 손님에게는 '첫 주문'을 할 수 있도록 안내해주세요!</div>
           </div>
         </div>
 
-        <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">
-            <span class="badge">Q</span>
-            사장님이 뭐라고 하시진 않을까요?
-          </div>
-          <div class="faq-a">
-            걱정 마세요! "패스오더로 주문 들어오면 저희가 일하기 훨씬 편해요. 미리 주문이 들어오니까 빠르게 준비할 수 있고, 바쁜 시간에 줄도 안 밀려요" 라고 말씀드려도 좋아요. 😊
-          </div>
-        </div>
+        <div class="faq-section">
+          <div class="faq-section-title">💬 자주 묻는 질문</div>
 
-        <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">
-            <span class="badge">Q</span>
-            QR 찍었는데 앱이 바로 안 깔린다고 해요
+          <div class="faq-item" >
+            <div class="faq-q">
+              <span class="badge">Q</span>
+              사장님이 뭐라고 하시진 않을까요?
+            </div>
+            <div class="faq-a">
+              걱정 마세요! "패스오더로 주문 들어오면 저희가 일하기 훨씬 편해요. 미리 주문이 들어오니까 빠르게 준비할 수 있고, 바쁜 시간에 줄도 안 밀려요" 라고 말씀드려도 좋아요. 😊
+            </div>
           </div>
-          <div class="faq-a">
-            QR 찍으면 먼저 웹페이지가 떠요! "페이지 맨 아래 버튼 눌러보세요~" 라고 안내해주시면 앱스토어로 이동합니다 😊
+
+          <div class="faq-item" >
+            <div class="faq-q">
+              <span class="badge">Q</span>
+              QR 찍었는데 앱이 바로 안 깔린다고 해요
+            </div>
+            <div class="faq-a">
+              QR 찍으면 먼저 웹페이지가 떠요! "페이지 맨 아래 버튼 눌러보세요~" 라고 안내해주시면 앱스토어로 이동합니다 😊
+            </div>
           </div>
         </div>
       </div>
@@ -865,11 +916,11 @@
 
     <!-- STEP 4 -->
     <div class="step-card">
-      <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-header" >
         <div class="step-number">4</div>
         <div class="step-title">
           <h3>현금 정산 안내</h3>
-          <p>매주 월요일 정산!</p>
+          <p>1주일에 1번 정산!</p>
         </div>
         <div class="step-toggle">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -881,11 +932,11 @@
         <div class="info-table">
           <div class="info-row">
             <div class="info-label">정산 주기</div>
-            <div class="info-value">매주 월요일 (1주일에 1번)</div>
+            <div class="info-value">1주일에 1번</div>
           </div>
           <div class="info-row">
             <div class="info-label">정산 기준</div>
-            <div class="info-value">전주 월~일 발생한 성과 + 이전 누적 건</div>
+            <div class="info-value">전주 발생한 성과 (+ 이전 누적 건)</div>
           </div>
           <div class="info-row">
             <div class="info-label">정산 형태</div>
@@ -897,30 +948,27 @@
           </div>
         </div>
 
-        <div class="important-box success">
-          <div class="important-box-title">
-            <span>📌</span> 예시
-          </div>
-          <p>12/2(월) ~ 12/8(일) 전환 5건 발생<br>→ 12/9(월)에 <strong>10,000원</strong> 지급!</p>
-        </div>
+        <div class="faq-section">
+          <div class="faq-section-title">💬 자주 묻는 질문</div>
 
-        <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">
-            <span class="badge">Q</span>
-            내 전환 실적은 어떻게 확인해요?
+          <div class="faq-item" >
+            <div class="faq-q">
+              <span class="badge">Q</span>
+              내 전환 실적은 어떻게 확인해요?
+            </div>
+            <div class="faq-a">
+              일주일에 2~3번 정도 현재 실적 안내 메시지를 보내드려요! 따로 확인하실 필요 없이, 메시지 오면 바로 보실 수 있어요. 추후에는 실시간 확인 기능도 준비 중이에요! 😊
+            </div>
           </div>
-          <div class="faq-a">
-            일주일에 2~3번 정도 현재 실적 안내 메시지를 보내드려요! 따로 확인하실 필요 없이, 메시지 오면 바로 보실 수 있어요. 추후에는 실시간 확인 기능도 준비 중이에요! 😊
-          </div>
-        </div>
 
-        <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-q">
-            <span class="badge">Q</span>
-            계좌는 언제 알려드려야 해요?
-          </div>
-          <div class="faq-a">
-            월요일에 받는 실적 안내 메시지(카카오톡)에서 정산 정보 입력을 요청드려요! 거기서 계좌 정보 작성해주시면 영업일 2~3일 내로 입금됩니다. 미리 안 보내주셔도 돼요!
+          <div class="faq-item" >
+            <div class="faq-q">
+              <span class="badge">Q</span>
+              계좌는 언제 알려드려야 해요?
+            </div>
+            <div class="faq-a">
+              실적 안내 메시지(카카오톡)에서 정산 정보 입력을 요청드려요! 거기서 계좌 정보 작성해주시면 영업일 2~3일 내로 입금됩니다. 미리 안 보내주셔도 돼요!
+            </div>
           </div>
         </div>
       </div>
@@ -928,13 +976,13 @@
 
     <!-- Contact -->
     <div class="contact-section">
-      <h3>📞 궁금한 거 있으면 편하게!</h3>
+      <h3>📞 궁금한 내용은 아래 채널을 통해 문의해주세요!</h3>
       <div class="contact-buttons">
-        <a href="https://passorder.kr/template/part-timer_ask" class="contact-btn primary">
-          <span>📝</span> 1:1 문의하기
+        <a href="https://passorder.kr/e2zIF3ai" class="contact-btn primary">
+          <span>📝</span> 문의 채널에 남기기
         </a>
-        <a href="http://pf.kakao.com/_exeyIxj" class="contact-btn kakao">
-          <span>💬</span> 카카오톡 문의
+        <a href="https://passorder.kr/NabSZFl1" class="contact-btn kakao">
+          <span>💬</span> 1:1 문의하기
         </a>
       </div>
       <p class="contact-time">운영시간: 평일 10:00 ~ 18:00</p>
