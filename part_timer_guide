@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시급 2배 챌린지 가이드 | 패스오더</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FBD20D;
+      --primary-light: #FFF9E5;
+      --primary-dark: #E5BF00;
+      --accent: #452715;
+      --accent-light: #5C3A22;
+      --success: #22C55E;
+      --success-light: #ECFDF5;
+      --warning: #F59E0B;
+      --warning-light: #FFFBEB;
+      --danger: #EF4444;
+      --danger-light: #FEF2F2;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-500: #6B7280;
+      --gray-700: #374151;
+      --gray-900: #111827;
+      --radius: 16px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, var(--primary-light) 0%, #FFF 300px);
+      color: var(--gray-900);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 16px 40px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+
+    .header h1 span {
+      color: var(--accent);
+    }
+
+    .header p {
+      font-size: 15px;
+      color: var(--gray-500);
+    }
+
+    /* Reward Banner */
+    .reward-banner {
+      background: var(--primary);
+      border-radius: var(--radius);
+      padding: 24px;
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reward-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+    }
+
+    .reward-banner .label {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 4px;
+    }
+
+    .reward-banner .amount {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .reward-banner .sub {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    /* Step Card */
+    .step-card {
+      background: white;
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .step-header:hover {
+      background: var(--gray-50);
+    }
+
+    .step-number {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      flex: 1;
+    }
+
+    .step-title h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .step-title p {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .step-toggle {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-300);
+      transition: transform 0.3s;
+    }
+
+    .step-card.open .step-toggle {
+      transform: rotate(180deg);
+    }
+
+    .step-content {
+      display: none;
+      padding: 20px 20px 24px;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    .step-card.open .step-content {
+      display: block;
+    }
+
+    /* Check Item */
+    .check-list {
+      margin-top: 16px;
+    }
+
+    .check-item {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+    }
+
+    .check-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--success);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .check-icon svg {
+      width: 14px;
+      height: 14px;
+      color: white;
+    }
+
+    .check-item strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .check-item span {
+      font-size: 13px;
+      color: var(--gray-500);
+      line-height: 1.5;
+    }
+
+    /* Important Box */
+    .important-box {
+      background: var(--primary-light);
+      border: 2px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .important-box.success {
+      background: var(--success-light);
+      border-color: var(--success);
+    }
+
+    .important-box.warning {
+      background: var(--warning-light);
+      border-color: var(--warning);
+    }
+
+    .important-box-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .important-box p {
+      font-size: 14px;
+      color: var(--gray-700);
+    }
+
+    /* Condition Table */
+    .condition-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px 16px;
+      background: var(--primary-light);
+      border-radius: var(--radius-sm);
+      margin: 16px 0;
+      flex-wrap: wrap;
+    }
+
+    .condition-step {
+      background: white;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .condition-arrow {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .condition-result {
+      background: var(--accent);
+      color: var(--primary);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* Script Box */
+    .script-box {
+      background: linear-gradient(135deg, var(--primary-light) 0%, #FFF 100%);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin-top: 16px;
+      position: relative;
+    }
+
+    .script-box::before {
+      content: '💬';
+      position: absolute;
+      top: -12px;
+      left: 16px;
+      font-size: 20px;
+      background: white;
+      padding: 0 4px;
+    }
+
+    .script-box p {
+      font-size: 15px;
+      color: var(--gray-700);
+      line-height: 1.7;
+    }
+
+    /* Comparison */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .comparison-item {
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      text-align: center;
+    }
+
+    .comparison-item.bad {
+      background: var(--danger-light);
+    }
+
+    .comparison-item.good {
+      background: var(--success-light);
+    }
+
+    .comparison-item .emoji {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .comparison-item p {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .comparison-item.bad p {
+      color: var(--danger);
+    }
+
+    .comparison-item.good p {
+      color: var(--success);
+    }
+
+    /* Flow Steps */
+    .flow-steps {
+      margin-top: 16px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      position: relative;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 44px;
+      bottom: 0;
+      width: 2px;
+      background: var(--gray-200);
+    }
+
+    .flow-step-num {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .flow-step-content strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .flow-step-content span {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    /* FAQ */
+    .faq-item {
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .faq-q {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .faq-q .badge {
+      background: var(--accent);
+      color: var(--primary);
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .faq-a {
+      display: none;
+      padding: 0 16px 16px;
+      font-size: 14px;
+      color: var(--gray-700);
+      line-height: 1.7;
+    }
+
+    .faq-item.open .faq-a {
+      display: block;
+    }
+
+    /* Info Table */
+    .info-table {
+      margin-top: 16px;
+    }
+
+    .info-row {
+      display: flex;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      width: 100px;
+      font-size: 14px;
+      color: var(--gray-500);
+      flex-shrink: 0;
+    }
+
+    .info-value {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Contact */
+    .contact-section {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      margin-top: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .contact-section h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .contact-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .contact-btn.primary {
+      background: var(--accent);
+      color: var(--primary);
+    }
+
+    .contact-btn.kakao {
+      background: #FEE500;
+      color: #3C1E1E;
+    }
+
+    .contact-time {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    /* Tip */
+    .tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px;
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+    }
+
+    .tip-icon {
+      font-size: 16px;
+    }
+
+    .tip p {
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    /* Point highlight */
+    .highlight {
+      background: linear-gradient(transparent 60%, rgba(251, 210, 13, 0.4) 60%);
+      font-weight: 600;
+    }
+
+    /* Guide table */
+    .guide-table {
+      margin-top: 16px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+
+    .guide-row {
+      display: flex;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .guide-row:last-child {
+      border-bottom: none;
+    }
+
+    .guide-q {
+      width: 40%;
+      padding: 14px;
+      background: var(--gray-50);
+      font-size: 13px;
+      color: var(--gray-700);
+      font-weight: 500;
+    }
+
+    .guide-a {
+      flex: 1;
+      padding: 14px;
+      font-size: 13px;
+      color: var(--gray-700);
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <span class="header-badge">🔥 알바하면서 추가 수입</span>
+      <h1><span>시급 2배</span> 챌린지</h1>
+      <p>쿠폰 나눠주고 추가 수익 받자!</p>
+    </header>
+
+    <!-- Reward Banner -->
+    <div class="reward-banner">
+      <p class="label">손님 1명 첫 주문 시</p>
+      <p class="amount">2,000원</p>
+      <p class="sub">한 달 최대 60만원까지!</p>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-card open">
+      <div class="step-header" onclick="toggleStep(this)">
+        <div class="step-number">1</div>
+        <div class="step-title">
+          <h3>쿠폰 수령 및 확인</h3>
+          <p>쿠폰 받으면 바로 확인!</p>
+        </div>
+        <div class="step-toggle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </div>
+      </div>
+      <div class="step-content">
+        <p>선정 안내 메시지를 받은 후 <strong>영업일 기준 2~3일 내</strong>에 쿠폰이 도착해요.</p>
+        
+        <div class="check-list">
+          <div class="check-item">
+            <div class="check-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <strong>내 이름/닉네임 확인</strong>
+              <span>이 정보로 누가 전달했는지 추적돼요. 오타나 다른 이름이면 리워드 정산이 안 될 수 있어요!</span>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <div>
+              <strong>QR코드 직접 스캔 테스트</strong>
+              <span>인쇄 불량으로 QR이 안 찍히면 손님도, 나도 손해! 미리 테스트해보세요.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tip">
+          <span class="tip-icon">💡</span>
+          <p>QR 찍으면 혜택 안내 페이지가 뜨고, 페이지 맨 아래 버튼 누르면 앱으로 연결돼요!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-card">
+      <div class="step-header" onclick="toggleStep(this)">
+        <div class="step-number">2</div>
+        <div class="step-title">
+          <h3>리워드 적립 조건 ⭐</h3>
+          <p>이 조건 꼭 알아두세요!</p>
+        </div>
+        <div class="step-toggle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </div>
+      </div>
+      <div class="step-content">
+        <p>쿠폰 전달한다고 무조건 리워드가 쌓이는 건 아니에요!</p>
+        
+        <div class="condition-flow">
+          <span class="condition-step">패스오더 신규 손님</span>
+          <span class="condition-arrow">→</span>
+          <span class="condition-step">내 QR 스캔</span>
+          <span class="condition-arrow">→</span>
+          <span class="condition-step">첫 주문 완료</span>
+          <span class="condition-arrow">=</span>
+          <span class="condition-result">2,000원 적립!</span>
+        </div>
+
+        <div class="important-box warning">
+          <div class="important-box-title">
+            <span>⚠️</span> 꼭 기억하세요!
+          </div>
+          <p>손님이 QR 찍고 <span class="highlight">30일 이내</span>에 첫 주문해야 성과로 인정돼요!</p>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span class="badge">Q</span>
+            손님이 "이미 패스오더 쓰고 있어요"라고 하면?
+          </div>
+          <div class="faq-a">
+            "아 그러시구나~ 혹시 주변에 패스오더 안 쓰시는 분 계시면 전달해주세요!" 하고 쿠폰 드리세요. 그분이 첫 주문하면 2,000원 받을 수 있어요! 😊
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span class="badge">Q</span>
+            하루에 몇 명까지 가능해요?
+          </div>
+          <div class="faq-a">
+            하루 제한은 없어요! 대신 한 달 최대 300명까지. 한 달이면 <strong>최대 60만원</strong>까지 추가로 벌 수 있어요!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-card">
+      <div class="step-header" onclick="toggleStep(this)">
+        <div class="step-number">3</div>
+        <div class="step-title">
+          <h3>쿠폰 전달하기</h3>
+          <p>자연스럽게 전달하는 꿀팁!</p>
+        </div>
+        <div class="step-toggle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </div>
+      </div>
+      <div class="step-content">
+        <div class="important-box">
+          <div class="important-box-title">
+            <span>🕐</span> 베스트 타이밍
+          </div>
+          <p><strong>음료 건네줄 때!</strong> 음료랑 같이 쿠폰 건네면 끝. 특히 아메리카노 주문 손님에게 적극 어필!</p>
+        </div>
+
+        <h4 style="font-size: 15px; margin: 20px 0 12px; font-weight: 700;">💡 이렇게 말해보세요</h4>
+        
+        <div class="comparison">
+          <div class="comparison-item bad">
+            <p class="emoji">❌</p>
+            <p>"할인쿠폰 드릴게요"</p>
+          </div>
+          <div class="comparison-item good">
+            <p class="emoji">✅</p>
+            <p>"제가 특별히 드리는<br>혜택이에요"</p>
+          </div>
+        </div>
+
+        <div class="script-box">
+          <p>"다음에 오실 때, <strong>QR 찍고 앱으로 주문하시면 아메리카노 100원</strong>이에요!<br><br>손님이 첫 주문하시면 저도 소정의 리워드를 받을 수 있어요 😊"</p>
+        </div>
+
+        <h4 style="font-size: 15px; margin: 24px 0 12px; font-weight: 700;">📱 손님 사용 방법</h4>
+        
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-content">
+              <strong>QR 스캔</strong>
+              <span>카메라로 쿠폰 QR 찍기</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-content">
+              <strong>혜택 페이지 확인</strong>
+              <span>웹페이지에서 혜택 내용 보기</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-content">
+              <strong>맨 아래 버튼 클릭</strong>
+              <span>앱스토어로 이동</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-content">
+              <strong>앱 설치 & 가입</strong>
+              <span>이미 앱 있으면 바로 5번으로!</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-num">5</div>
+            <div class="flow-step-content">
+              <strong>첫 주문 완료!</strong>
+              <span>여기까지 해야 리워드 적립 완료 ✅</span>
+            </div>
+          </div>
+        </div>
+
+        <h4 style="font-size: 15px; margin: 24px 0 12px; font-weight: 700;">📋 손님 질문 대응 가이드</h4>
+        
+        <div class="guide-table">
+          <div class="guide-row">
+            <div class="guide-q">패스오더가 뭐예요?</div>
+            <div class="guide-a">앱으로 미리 주문하면 줄 안 서고 금방 픽업할 수 있는 서비스예요</div>
+          </div>
+          <div class="guide-row">
+            <div class="guide-q">아메리카노 100원이요?</div>
+            <div class="guide-a">쿠폰 QR 찍고, 앱으로 첫 주문하시면 아메리카노 100원에 드실 수 있어요</div>
+          </div>
+          <div class="guide-row">
+            <div class="guide-q">다른 혜택도 있어요?</div>
+            <div class="guide-a">아메리카노 100원 쿠폰 사용 후, 전 메뉴 1,500원 할인쿠폰 추가 증정해요!</div>
+          </div>
+          <div class="guide-row">
+            <div class="guide-q">기한은 언제까지?</div>
+            <div class="guide-a">기한 넉넉하니까 다음에 오실 때 편하게 써주세요!</div>
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span class="badge">Q</span>
+            사장님이 뭐라고 하시진 않을까요?
+          </div>
+          <div class="faq-a">
+            걱정 마세요! "패스오더로 주문 들어오면 저희가 일하기 훨씬 편해요. 미리 주문이 들어오니까 빠르게 준비할 수 있고, 바쁜 시간에 줄도 안 밀려요" 라고 말씀드려도 좋아요. 😊
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span class="badge">Q</span>
+            QR 찍었는데 앱이 바로 안 깔린다고 해요
+          </div>
+          <div class="faq-a">
+            QR 찍으면 먼저 웹페이지가 떠요! "페이지 맨 아래 버튼 눌러보세요~" 라고 안내해주시면 앱스토어로 이동합니다 😊
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-card">
+      <div class="step-header" onclick="toggleStep(this)">
+        <div class="step-number">4</div>
+        <div class="step-title">
+          <h3>현금 정산 안내</h3>
+          <p>매주 월요일 정산!</p>
+        </div>
+        <div class="step-toggle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </div>
+      </div>
+      <div class="step-content">
+        <div class="info-table">
+          <div class="info-row">
+            <div class="info-label">정산 주기</div>
+            <div class="info-value">매주 월요일 (1주일에 1번)</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">정산 기준</div>
+            <div class="info-value">전주 월~일 발생한 성과 + 이전 누적 건</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">정산 형태</div>
+            <div class="info-value"><strong>현금 계좌 입금</strong></div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">입금 시점</div>
+            <div class="info-value">계좌 정보 입력 후 영업일 2~3일 내</div>
+          </div>
+        </div>
+
+        <div class="important-box success">
+          <div class="important-box-title">
+            <span>📌</span> 예시
+          </div>
+          <p>12/2(월) ~ 12/8(일) 전환 5건 발생<br>→ 12/9(월)에 <strong>10,000원</strong> 지급!</p>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span class="badge">Q</span>
+            내 전환 실적은 어떻게 확인해요?
+          </div>
+          <div class="faq-a">
+            일주일에 2~3번 정도 현재 실적 안내 메시지를 보내드려요! 따로 확인하실 필요 없이, 메시지 오면 바로 보실 수 있어요. 추후에는 실시간 확인 기능도 준비 중이에요! 😊
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span class="badge">Q</span>
+            계좌는 언제 알려드려야 해요?
+          </div>
+          <div class="faq-a">
+            월요일에 받는 실적 안내 메시지(카카오톡)에서 정산 정보 입력을 요청드려요! 거기서 계좌 정보 작성해주시면 영업일 2~3일 내로 입금됩니다. 미리 안 보내주셔도 돼요!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="contact-section">
+      <h3>📞 궁금한 거 있으면 편하게!</h3>
+      <div class="contact-buttons">
+        <a href="https://passorder.kr/template/part-timer_ask" class="contact-btn primary">
+          <span>📝</span> 1:1 문의하기
+        </a>
+        <a href="http://pf.kakao.com/_exeyIxj" class="contact-btn kakao">
+          <span>💬</span> 카카오톡 문의
+        </a>
+      </div>
+      <p class="contact-time">운영시간: 평일 10:00 ~ 18:00</p>
+    </div>
+  </div>
+
+  <script>
+    function toggleStep(header) {
+      const card = header.closest('.step-card');
+      card.classList.toggle('open');
+    }
+
+    function toggleFaq(item) {
+      item.classList.toggle('open');
+    }
+
+    // 첫 번째 스텝 자동 열기
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelector('.step-card').classList.add('open');
+    });
+  </script>
+</body>
+</html>
