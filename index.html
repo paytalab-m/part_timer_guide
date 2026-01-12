@@ -2479,18 +2479,10 @@
 	  // (25%, 50%, 75%, 100% 도달 시 1회 기록)
 	  // ================================
 	  const scrollMarks = { 25: false, 50: false, 75: false, 100: false };
-	
+
 	  function sendScrollEvent(percent) {
-	    const fd = new FormData();
-	    fd.append('event_name', 'scroll_' + percent);
-	    fd.append('alba_id', albaId);
-	    fd.append('event_time', getKoreanTime());
-	    fd.append('event_value', percent + '%');
-	
-	    fetch(GAS_URL, {
-	      method: 'POST',
-	      body: fd,
-	      mode: 'no-cors'
+	    trackEvent('scroll_' + percent, {
+	      event_value: percent + '%'
 	    });
 	  }
 	
