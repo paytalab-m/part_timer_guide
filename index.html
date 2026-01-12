@@ -2,11 +2,15 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>시급 2배 챌린지 가이드 | 패스오더</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>패스오더 시급 2배 챌린지 가이드</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- 다음 주소 API -->
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  
   <style>
     :root {
       --primary: #FBD20D;
@@ -14,6 +18,7 @@
       --primary-dark: #E5BF00;
       --accent: #452715;
       --accent-light: #5C3A22;
+      --toss-blue: #3182F6;
       --success: #22C55E;
       --success-light: #ECFDF5;
       --warning: #F59E0B;
@@ -24,37 +29,887 @@
       --gray-100: #F3F4F6;
       --gray-200: #E5E7EB;
       --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
       --gray-500: #6B7280;
+      --gray-600: #4B5563;
       --gray-700: #374151;
       --gray-900: #111827;
       --radius: 16px;
       --radius-sm: 12px;
     }
+    
+  /* ========== 커스텀 드롭다운 ========== */
+	.custom-select-wrapper {
+	  position: relative;
+	}
+
+	.custom-select-trigger {
+	  width: 100%;
+	  padding: 16px;
+	  border-radius: var(--radius-sm);
+	  border: 1px solid var(--gray-200);
+	  background: var(--gray-50);
+	  font-size: 16px;
+	  outline: none;
+	  cursor: pointer;
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  transition: all 0.2s;
+	  -webkit-appearance: none;
+	}
+
+	.custom-select-trigger:focus,
+	.custom-select-trigger.active {
+	  border-color: var(--gray-300);
+	  background: white;
+	}
+
+	.custom-select-trigger .placeholder {
+	  color: var(--gray-400);
+	}
+
+	.custom-select-trigger .selected-value {
+	  color: var(--gray-900);
+	}
+
+	.custom-select-trigger .arrow {
+	  width: 20px;
+	  height: 20px;
+	  transition: transform 0.2s;
+	}
+
+	.custom-select-trigger.active .arrow {
+	  transform: rotate(180deg);
+	}
+
+	.custom-select-dropdown {
+	  position: absolute;
+	  top: calc(100% + 4px);
+	  left: 0;
+	  right: 0;
+	  background: white;
+	  border: 1px solid var(--gray-200);
+	  border-radius: var(--radius-sm);
+	  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+	  max-height: 280px;
+	  overflow-y: auto;
+	  z-index: 100;
+	  display: none;
+	  -webkit-overflow-scrolling: touch;
+	}
+	
+	.custom-select-dropdown.show {
+	  display: block;
+	  animation: dropdownFade 0.2s ease;
+	}
+
+	@keyframes dropdownFade {
+	  from { 
+	    opacity: 0;
+	    transform: translateY(-8px);
+	  }
+	  to { 
+	    opacity: 1;
+	    transform: translateY(0);
+	  }
+	}
+	
+	.custom-select-option {
+	  padding: 14px 16px;
+	  font-size: 15px;
+	  color: var(--gray-700);
+	  cursor: pointer;
+	  transition: background 0.15s;
+	  border-bottom: 1px solid var(--gray-100);
+	}
+
+	.custom-select-option:last-child {
+	  border-bottom: none;
+	}
+	
+	.custom-select-option:hover,
+	.custom-select-option:active {
+	  background: var(--primary-light);
+	}
+	
+	.custom-select-option.selected {
+	  background: var(--primary-light);
+	  color: var(--accent);
+	  font-weight: 600;
+	}
+	
+	.custom-select-option.highlight {
+	  background: var(--primary);
+	  color: var(--accent);
+	  font-weight: 600;
+	}
+	
+	.hidden-select {
+	  position: absolute;
+	  opacity: 0;
+	  pointer-events: none;
+	  height: 0;
+	}
+	
+	.bank-other-input {
+	  margin-top: 10px;
+	  display: none;
+	}
+	
+	.bank-other-input.show {
+	  display: block;
+	}
+  
+  
+  /* 챌린지 플로우 섹션 */
+	.challenge-flow-section {
+	  background: white;
+	  border-radius: 16px;
+	  padding: 24px 20px;
+	  margin-bottom: 20px;
+	  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+	}
+
+	.challenge-flow-title {
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  gap: 8px;
+	  font-size: 18px;
+	  font-weight: 800;
+	  color: #111827;
+	  margin-bottom: 20px;
+	  text-align: center;
+	}
+
+	.challenge-flow-title .emoji {
+	  font-size: 20px;
+	}
+
+	.challenge-flow-grid {
+	  display: grid;
+	  grid-template-columns: 1fr 1fr;
+	  gap: 12px;
+	}
+
+	.flow-card {
+	  background: #F9FAFB;
+	  border-radius: 12px;
+	  padding: 16px 12px;
+	  text-align: center;
+	  position: relative;
+	}
+
+	.flow-card.reward {
+	  background: #FFF9E5;
+	  border: 2px solid #FBD20D;
+	}
+
+	.flow-step-label {
+	  font-size: 11px;
+	  font-weight: 700;
+	  color: #9CA3AF;
+	  margin-bottom: 8px;
+	  letter-spacing: 0.5px;
+	}
+
+	.flow-card.reward .flow-step-label {
+	  color: #452715;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  gap: 4px;
+	}
+
+	.flow-card-image {
+	  width: 80px;
+	  height: 80px;
+	  margin: 0 auto 8px;
+	  object-fit: contain;
+	}
+
+	.flow-card.reward .flow-card-image {
+	  width: 60px;
+	  height: 60px;
+	}
+
+	.flow-card-text {
+	  font-size: 13px;
+	  font-weight: 600;
+	  color: #374151;
+	  line-height: 1.4;
+	}
+
+	.flow-card.reward .flow-card-text {
+	  font-size: 18px;
+	  font-weight: 800;
+	  color: #452715;
+	}
+
+	.flow-card.reward .flow-card-text span {
+	  color: #E5BF00;
+	}
+  
+  
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     body {
-      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--primary-light);
       color: var(--gray-900);
       line-height: 1.6;
       min-height: 100vh;
+      padding-bottom: 100px; /* 하단 CTA 공간 확보 */
     }
 
+    /* ========== 첫 진입 안내 팝업 ========== */
+    .intro-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .intro-overlay.hidden {
+      display: none;
+    }
+
+    .intro-popup {
+      background: white;
+      border-radius: 24px;
+      max-width: 340px;
+      width: 100%;
+      padding: 32px 24px;
+      text-align: center;
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .intro-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .intro-popup h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .intro-steps {
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .intro-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+    }
+
+    .intro-step:not(:last-child) {
+      border-bottom: 1px dashed var(--gray-200);
+    }
+
+    .intro-step-num {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      color: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .intro-step-text {
+      font-size: 14px;
+      color: var(--gray-700);
+    }
+
+    .intro-step-text strong {
+      color: var(--accent);
+    }
+
+    .intro-warning {
+      background: var(--warning-light);
+      border: 2px solid var(--warning);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 24px;
+    }
+
+    .intro-warning p {
+      font-size: 13px;
+      color: var(--gray-700);
+      line-height: 1.6;
+    }
+
+    .intro-warning .emoji {
+      margin-right: 4px;
+    }
+
+    .intro-btn {
+      width: 100%;
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 16px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+	.intro-cta-preview{
+	  width: 100%;
+	  max-width: 280px;
+	  margin: 12px auto 6px;
+	  display: block;
+	  border-radius: 18px;
+	  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+	  transform-origin: center;
+	  animation: ctaPulse 1.2s ease-in-out infinite;
+	}
+	
+	.intro-cta-hint{
+	  font-size: 13px;
+	  color: var(--gray-600);
+	  margin-bottom: 6px;
+	}
+	
+	@keyframes ctaPulse{
+	  0%,100% { transform: translateY(0) scale(1); }
+	  50%     { transform: translateY(-2px) scale(1.02); }
+	}
+
+
+	html { -webkit-text-size-adjust: 100%; }
+
+	.form-group input{
+	  line-height: 1.2;       /* ✅ 커서 베이스라인 안정화 */
+	  height: 56px;           /* ✅ 높이를 고정하면 더 안정적 */
+	  padding: 0 16px;        /* (기존 16px 상하패딩 대신) */
+	}
+
+
+
+    /* ========== 하단 고정 CTA ========== */
+    .footer-cta {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 500px;
+      padding: 16px 20px;
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      background: white;
+      z-index: 1000;
+    }
+
+	.btn-main .coin{
+	  display:inline-block;
+	  animation: coinBob 1.1s ease-in-out infinite;
+	}
+	.btn-main .coin.right{
+	  animation-delay: 0.15s;
+	}
+	
+	@keyframes coinBob{
+	  0%,100%{ transform: translateY(0); }
+	  50%{ transform: translateY(-3px); }
+	}
+
+
+    .btn-main {
+      width: 100%;
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 18px;
+      border-radius: var(--radius);
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(69, 39, 21, 0.3);
+    }
+
+    .btn-main:active {
+      transform: scale(0.98);
+    }
+
+    /* ========== 바텀시트 폼 팝업 ========== */
+    .form-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 2000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .form-overlay.show {
+      display: flex;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 32px 24px;
+      padding-bottom: max(32px, env(safe-area-inset-bottom));
+      animation: slideUp 0.3s cubic-bezier(0, 0.5, 0.5, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .form-handle {
+      width: 40px;
+      height: 4px;
+      background: var(--gray-300);
+      border-radius: 2px;
+      margin: 0 auto 24px;
+    }
+
+    .form-header {
+      margin-bottom: 28px;
+    }
+
+    .form-header h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gray-900);
+      line-height: 1.4;
+    }
+
+    .form-header p {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-top: 8px;
+    }
+
+    /* 폼 요소 */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 8px;
+    }
+
+    .form-group label .required {
+      color: var(--danger);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--gray-200);
+      background: var(--gray-50);
+      font-size: 16px; /* iOS 확대 방지 */
+      outline: none;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--gray-300);
+      background: white;
+      box-shadow: none;
+    }
+
+    .form-group input::placeholder {
+      color: var(--gray-400) !important;
+      opacity: 1;
+    }
+
+    .form-group input::-webkit-input-placeholder {
+      color: var(--gray-400) !important;
+      opacity: 1;
+    }
+
+    .form-group input::-moz-placeholder {
+      color: var(--gray-400) !important;
+      opacity: 1;
+    }
+
+    .form-group input:-ms-input-placeholder {
+      color: var(--gray-400) !important;
+    }
+
+    .form-group input:read-only::placeholder {
+      color: var(--gray-400) !important;
+    }
+
+    .form-group input:read-only {
+      background: var(--gray-50);
+      cursor: default;
+    }
+
+    .form-group select {
+      color: var(--gray-900);
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 48px;
+    }
+
+    .form-group select:focus {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23452715' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    }
+
+    .form-group select.placeholder-selected {
+      color: var(--gray-400);
+    }
+
+    .form-group select option {
+      color: var(--gray-900);
+    }
+
+    .form-group select option[value=""] {
+      color: var(--gray-400);
+    }
+
+    /* 체크박스 옵션 */
+    .checkbox-option {
+      background: var(--gray-50);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      border: 1px solid var(--gray-200);
+    }
+
+    .checkbox-option.checkbox-yellow {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--gray-700);
+      cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 1px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .checkbox-hint {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 6px;
+      margin-left: 32px;
+    }
+
+    /* 주소 입력 */
+    .address-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .address-row input {
+      flex: 1;
+    }
+
+    .address-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0 16px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* 제출 버튼 */
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 18px;
+      border-radius: var(--radius);
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-cancel {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--gray-500);
+      margin-top: 16px;
+      font-size: 14px;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    /* 개인정보 동의 */
+    .privacy-section {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin: 20px 0;
+    }
+
+    .privacy-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .required-badge {
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .privacy-title .underline {
+      text-decoration: underline;
+      color: var(--gray-700);
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .privacy-title .arrow {
+      color: var(--gray-400);
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    .privacy-content {
+      margin-top: 16px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .privacy-content.hidden {
+      display: none;
+    }
+
+    .privacy-intro {
+      color: var(--gray-500);
+      font-size: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-200);
+      margin-bottom: 12px;
+    }
+
+    .privacy-item {
+      margin-bottom: 16px;
+    }
+
+    .privacy-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .privacy-item-title {
+      font-weight: 700;
+      color: var(--gray-700);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .privacy-table {
+      width: 100%;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      overflow: hidden;
+      font-size: 12px;
+    }
+
+    .privacy-table tr {
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .privacy-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .privacy-table td {
+      padding: 10px;
+    }
+
+    .privacy-table .label-cell {
+      background: var(--gray-100);
+      color: var(--gray-600);
+      font-weight: 500;
+      width: 80px;
+      border-right: 1px solid var(--gray-200);
+    }
+
+    .privacy-list {
+      list-style: disc;
+      padding-left: 20px;
+      font-size: 12px;
+      color: var(--gray-600);
+      background: var(--gray-50);
+      padding: 12px 12px 12px 28px;
+      border-radius: 6px;
+    }
+
+    .privacy-list li {
+      margin-bottom: 4px;
+    }
+
+    .privacy-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .privacy-box {
+      background: var(--gray-50);
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .privacy-box p {
+      margin-bottom: 8px;
+    }
+
+    .privacy-box .privacy-list {
+      background: transparent;
+      padding: 0 0 0 16px;
+      margin-top: 6px;
+    }
+
+    .privacy-note {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-top: 8px;
+    }
+
+    /* 제출 완료 */
+    .submit-success {
+      display: none;
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .submit-success.show {
+      display: block;
+    }
+
+    .submit-success .icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+    }
+
+    .submit-success h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .submit-success p {
+      font-size: 14px;
+      color: var(--gray-600);
+      margin-bottom: 24px;
+    }
+
+    .btn-close-success {
+      background: var(--primary);
+      color: var(--accent);
+      border: none;
+      padding: 16px 40px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ========== 가이드 컨테이너 ========== */
     .container {
-      max-width: 100%;
+      max-width: 500px;
       margin: 0 auto;
       padding: 0 20px 40px;
     }
 
-    /* Header */
     .header {
       text-align: center;
-      padding: 32px 0 24px;
+      padding: 36px 0 34px;
     }
 
     .header-badge {
@@ -65,75 +920,58 @@
       font-weight: 700;
       padding: 6px 12px;
       border-radius: 20px;
-      margin-bottom: 12px;
-      animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
+      margin-bottom: 18px;
     }
 
     .header h1 {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       color: var(--gray-900);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
+      line-height: 1.3;
     }
 
     .header h1 span {
       color: var(--accent);
     }
 
-    .header p {
-      font-size: 15px;
-      color: var(--gray-500);
-    }
-
-    /* Reward Banner */
-    .reward-banner {
-      background: var(--primary);
+    /* 플로우 이미지 섹션 */
+    .flow-image-section {
+      background: white;
       border-radius: var(--radius);
-      padding: 28px;
-      color: var(--accent);
+      padding: 24px;
+      margin-bottom: 20px;
       text-align: center;
-      margin-bottom: 28px;
-      position: relative;
-      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    .reward-banner::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
-    }
-
-    .reward-banner .label {
-      font-size: 14px;
-      opacity: 0.9;
-      margin-bottom: 4px;
-    }
-
-    .reward-banner .amount {
-      font-size: 42px;
+    .flow-image-section h2 {
+      font-size: 18px;
       font-weight: 800;
-      margin-bottom: 4px;
+      color: var(--gray-900);
+      margin-bottom: 20px;
+      line-height: 1.4;
     }
 
-    .reward-banner .sub {
-      font-size: 13px;
-      opacity: 0.85;
+    .flow-image {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: var(--radius-sm);
     }
 
-    /* Step Card */
+    .welcome-name {
+      font-size: 15px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* 스텝 카드 */
     .step-card {
       background: white;
       border-radius: var(--radius);
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       overflow: hidden;
     }
@@ -142,17 +980,12 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 22px 24px;
-      transition: background 0.2s;
-    }
-
-    .step-header:hover {
-      background: var(--gray-50);
+      padding: 20px;
     }
 
     .step-number {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       background: var(--accent);
       color: var(--primary);
       border-radius: 50%;
@@ -160,61 +993,44 @@
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 15px;
       flex-shrink: 0;
     }
 
-    .step-title {
-      flex: 1;
-    }
-
     .step-title h3 {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 700;
       color: var(--gray-900);
     }
 
     .step-title p {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--gray-500);
       margin-top: 2px;
     }
 
-    .step-toggle {
-      display: none;
-    }
-
-    .step-card.open .step-toggle {
-      transform: rotate(180deg);
-    }
-
     .step-content {
-      display: block;
-      padding: 24px 24px 28px;
-      border-top: 1px solid var(--gray-100);
+      padding: 20px;
+      padding-top: 0;
     }
 
-    .step-card.open .step-content {
-      display: block;
-    }
-
-    /* Check Item */
+    /* 체크리스트 */
     .check-list {
-      margin-top: 20px;
+      margin-top: 16px;
     }
 
     .check-item {
       display: flex;
       gap: 12px;
-      padding: 18px;
+      padding: 16px;
       background: var(--gray-50);
       border-radius: var(--radius-sm);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .check-icon {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       background: var(--success);
       border-radius: 50%;
       display: flex;
@@ -224,14 +1040,14 @@
     }
 
     .check-icon svg {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       color: white;
     }
 
     .check-item strong {
       display: block;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       margin-bottom: 4px;
     }
@@ -242,18 +1058,13 @@
       line-height: 1.5;
     }
 
-    /* Important Box */
+    /* 중요 박스 */
     .important-box {
       background: var(--primary-light);
       border: 2px solid var(--primary);
       border-radius: var(--radius-sm);
-      padding: 22px;
-      margin-top: 20px;
-    }
-
-    .important-box.success {
-      background: var(--success-light);
-      border-color: var(--success);
+      padding: 18px;
+      margin-top: 16px;
     }
 
     .important-box.warning {
@@ -266,33 +1077,60 @@
       align-items: center;
       gap: 8px;
       font-weight: 700;
-      font-size: 15px;
-      margin-bottom: 8px;
+      font-size: 14px;
+      margin-bottom: 6px;
     }
 
     .important-box p {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--gray-700);
+      line-height: 1.6;
     }
 
-    /* Condition Table */
+    .highlight {
+      background: linear-gradient(transparent 60%, rgba(251, 210, 13, 0.4) 60%);
+      font-weight: 600;
+    }
+
+    /* 팁 박스 */
+    .tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px;
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      margin-top: 14px;
+    }
+
+    .tip-icon {
+      font-size: 14px;
+    }
+
+    .tip p {
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+
+    /* 조건 플로우 */
     .condition-flow {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 24px 20px;
+      gap: 6px;
+      padding: 20px 16px;
       background: var(--primary-light);
       border-radius: var(--radius-sm);
-      margin: 20px 0;
+      margin: 16px 0;
       flex-wrap: wrap;
     }
 
     .condition-step {
       background: white;
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--gray-700);
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -301,42 +1139,107 @@
     .condition-arrow {
       color: var(--accent);
       font-weight: bold;
+      font-size: 12px;
     }
 
     .condition-result {
       background: var(--accent);
       color: var(--primary);
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 12px;
       font-weight: 700;
     }
 
-    /* Script Box */
-    .script-box {
-      background: linear-gradient(135deg, var(--primary-light) 0%, #FFF 100%);
-      border: 2px solid var(--accent);
-      border-radius: var(--radius-sm);
-      padding: 24px;
-      margin-top: 20px;
+    /* FAQ */
+    .faq-section {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--gray-200);
     }
 
-    .script-box p {
-      font-size: 15px;
+    .faq-section-title {
+      font-size: 14px;
+      font-weight: 700;
       color: var(--gray-700);
-      line-height: 1.7;
+      margin-bottom: 12px;
     }
 
-    /* Comparison */
+    .faq-item {
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .faq-q {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .faq-q .badge {
+      background: var(--accent);
+      color: var(--primary);
+      font-size: 11px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .faq-a {
+      padding: 0 14px 14px;
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    /* 정보 테이블 */
+    .info-table {
+      margin-top: 16px;
+    }
+
+    .info-row {
+      display: flex;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      width: 90px;
+      font-size: 13px;
+      color: var(--gray-500);
+      flex-shrink: 0;
+    }
+
+    .info-value {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* 비교 */
     .comparison {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 20px;
+      gap: 10px;
+      margin-top: 16px;
     }
 
     .comparison-item {
-      padding: 18px;
+      padding: 14px;
       border-radius: var(--radius-sm);
       text-align: center;
     }
@@ -350,12 +1253,12 @@
     }
 
     .comparison-item .emoji {
-      font-size: 24px;
-      margin-bottom: 8px;
+      font-size: 20px;
+      margin-bottom: 6px;
     }
 
     .comparison-item p {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
     }
 
@@ -367,32 +1270,47 @@
       color: var(--success);
     }
 
-    /* Flow Steps */
+    /* 스크립트 박스 */
+    .script-box {
+      background: linear-gradient(135deg, var(--primary-light) 0%, #FFF 100%);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .script-box p {
+      font-size: 14px;
+      color: var(--gray-700);
+      line-height: 1.7;
+    }
+
+    /* 플로우 스텝 */
     .flow-steps {
-      margin-top: 20px;
+      margin-top: 16px;
     }
 
     .flow-step {
       display: flex;
       align-items: flex-start;
-      gap: 14px;
-      padding: 14px 0;
+      gap: 12px;
+      padding: 12px 0;
       position: relative;
     }
 
     .flow-step:not(:last-child)::after {
       content: '';
       position: absolute;
-      left: 15px;
-      top: 48px;
+      left: 14px;
+      top: 44px;
       bottom: 0;
       width: 2px;
       background: var(--gray-200);
     }
 
     .flow-step-num {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       background: var(--primary);
       color: var(--accent);
       border-radius: 50%;
@@ -400,7 +1318,7 @@
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13px;
       flex-shrink: 0;
       position: relative;
       z-index: 1;
@@ -408,193 +1326,18 @@
 
     .flow-step-content strong {
       display: block;
-      font-size: 15px;
+      font-size: 14px;
       margin-bottom: 2px;
     }
 
     .flow-step-content span {
-      font-size: 13px;
-      color: var(--gray-500);
-    }
-
-    /* FAQ */
-    .faq-section {
-      margin-top: 28px;
-      padding-top: 24px;
-      border-top: 1px dashed var(--gray-200);
-    }
-
-    .faq-section-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--gray-700);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .faq-item {
-      background: var(--gray-50);
-      border-radius: var(--radius-sm);
-      margin-top: 12px;
-      overflow: hidden;
-    }
-
-    .faq-section .faq-item:first-of-type {
-      margin-top: 0;
-    }
-
-    .faq-q {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 18px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .faq-q .badge {
-      background: var(--accent);
-      color: var(--primary);
       font-size: 12px;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      padding-bottom: 2px;
-    }
-
-    .faq-a {
-      display: block;
-      padding: 0 18px 18px;
-      font-size: 14px;
-      color: var(--gray-700);
-      line-height: 1.7;
-    }
-
-    .faq-item.open .faq-a {
-      display: block;
-    }
-
-    /* Info Table */
-    .info-table {
-      margin-top: 20px;
-    }
-
-    .info-row {
-      display: flex;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--gray-100);
-    }
-
-    .info-row:last-child {
-      border-bottom: none;
-    }
-
-    .info-label {
-      width: 100px;
-      font-size: 14px;
-      color: var(--gray-500);
-      flex-shrink: 0;
-    }
-
-    .info-value {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    /* Contact */
-    .contact-section {
-      background: white;
-      border-radius: var(--radius);
-      padding: 28px;
-      text-align: center;
-      margin-top: 28px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-
-    .contact-section h3 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    .contact-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .contact-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 16px 20px;
-      border-radius: var(--radius-sm);
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .contact-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .contact-btn.primary {
-      background: var(--accent);
-      color: var(--primary);
-    }
-
-    .contact-btn.kakao {
-      background: #FEE500;
-      color: #3C1E1E;
-    }
-
-    .contact-time {
-      margin-top: 16px;
-      font-size: 13px;
       color: var(--gray-500);
     }
 
-    /* Tip */
-    .tip {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 16px;
-      background: var(--gray-50);
-      border-radius: var(--radius-sm);
-      margin-top: 16px;
-    }
-
-    .tip-icon {
-      font-size: 16px;
-    }
-
-    .tip p {
-      font-size: 13px;
-      color: var(--gray-600);
-      line-height: 1.6;
-    }
-
-    /* Point highlight */
-    .highlight {
-      background: linear-gradient(transparent 60%, rgba(251, 210, 13, 0.4) 60%);
-      font-weight: 600;
-    }
-
-    /* Guide table */
+    /* 가이드 테이블 */
     .guide-table {
-      margin-top: 20px;
+      margin-top: 16px;
       border-radius: var(--radius-sm);
       overflow: hidden;
       border: 1px solid var(--gray-200);
@@ -610,47 +1353,198 @@
     }
 
     .guide-q {
-      width: 40%;
-      padding: 16px;
+      width: 35%;
+      padding: 14px 12px;
       background: var(--gray-50);
-      font-size: 13px;
+      font-size: 12px;
       color: var(--gray-700);
       font-weight: 500;
     }
 
     .guide-a {
       flex: 1;
-      padding: 16px;
-      font-size: 13px;
-      color: var(--gray-700);
+      padding: 14px 12px;
+      font-size: 12px;
+      color: var(--gray-600);
       background: white;
     }
+
+    /* 연락처 섹션 */
+    .contact-section {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      margin-top: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .contact-section h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .contact-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .contact-btn.primary {
+      background: var(--accent);
+      color: var(--primary);
+    }
+
+    .contact-btn.kakao {
+      background: #FEE500;
+      color: #3C1E1E;
+    }
+
+    .contact-time {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+	.contact-info-box{
+	  background: var(--gray-50);
+	  border: 1px solid var(--gray-200);
+	  border-radius: var(--radius-sm);
+	  padding: 14px 12px;
+	  text-align: center;
+	}
+	
+	.contact-info-box .title{
+	  font-size: 12px;
+	  font-weight: 700;
+	  color: var(--gray-600);
+	  margin-bottom: 6px;
+	}
+	
+	.contact-info-box .phone{
+	  font-size: 16px;
+	  font-weight: 800;
+	  color: var(--accent);
+	  letter-spacing: 0.2px;
+	}
+	
+	.contact-info-box .note{
+	  font-size: 12px;
+	  color: var(--gray-500);
+	  margin-top: 6px;
+	  line-height: 1.5;
+	}
   </style>
 </head>
 <body>
+
+  <!-- ========== 첫 진입 안내 팝업 ========== -->
+  <div id="intro-overlay" class="intro-overlay">
+    <div class="intro-popup">
+      <div class="intro-icon">📋</div>
+      <h2>시급 2배 챌린지<br>참여 방법 안내</h2>
+      
+      <div class="intro-steps">
+        <div class="intro-step">
+          <div class="intro-step-num">1</div>
+          <div class="intro-step-text">참여를 위한 <strong>가이드</strong>를 꼼꼼히 확인해주세요</div>
+        </div>
+
+		<div class="intro-step">
+		  <div class="intro-step-num">2</div>
+		  <div class="intro-step-text">하단의 <strong>리워드 정산 정보 입력하기</strong> 버튼을 눌러주세요</div>
+		</div>
+
+		<img class="intro-cta-preview" src="images/reward.png" alt="리워드 정산 정보 입력하기 버튼 예시">
+
+        <div class="intro-step">
+          <div class="intro-step-num">3</div>
+          <div class="intro-step-text">정보 입력 완료 시 <strong>참여 확정!</strong></div>
+        </div>
+      </div>
+
+      <div class="intro-warning">
+        <p><span class="emoji">⚠️</span> 리워드 정산 정보를 입력해야<br>참여가 확정됩니다!<br>참여 가이드 확인 후 꼭 입력해주세요.</p>
+      </div>
+
+      <button onclick="closeIntro()" class="intro-btn">확인했습니다</button>
+    </div>
+  </div>
+
+  <!-- ========== 가이드 컨테이너 ========== -->
   <div class="container">
     <!-- Header -->
     <header class="header">
+      <p id="welcome-name" class="welcome-name" style="display: none;"></p>
       <span class="header-badge">🔥 알바하면서 월 최대 60만원 추가 수입</span>
       <h1><span>패스오더</span><br>[시급 2배 챌린지] 가이드</h1>
     </header>
 
+    <!-- 챌린지 플로우 섹션 -->
+		<div class="challenge-flow-section">
+		  <div class="challenge-flow-title">
+		    <span class="emoji">🎯</span>
+		    챌린지는 이렇게 진행돼요!
+		  </div>
+  
+		  <div class="challenge-flow-grid">
+		    <!-- STEP 1 -->
+		    <div class="flow-card">
+		      <div class="flow-step-label">STEP 1</div>
+		      <img src="images/action_1.png" alt="손님에게 쿠폰 전달" class="flow-card-image">
+		      <div class="flow-card-text">손님에게 쿠폰 전달</div>
+		    </div>
+    
+		    <!-- STEP 2 -->
+		    <div class="flow-card">
+		      <div class="flow-step-label">STEP 2</div>
+		      <img src="images/action_2.png" alt="손님이 QR 스캔" class="flow-card-image">
+		      <div class="flow-card-text">손님이 내 쿠폰의 <br>QR 스캔</div>
+		    </div>
+    
+		    <!-- STEP 3 -->
+		    <div class="flow-card">
+		      <div class="flow-step-label">STEP 3</div>
+		      <img src="images/action_3.png" alt="패스오더 첫 주문" class="flow-card-image">
+		      <div class="flow-card-text">패스오더 첫 주문</div>
+		    </div>
+    
+		    <!-- REWARD -->
+		    <div class="flow-card reward">
+		      <div class="flow-step-label">
+		        <span>💰</span> REWARD
+		      </div>
+		      <img src="images/action_4.png" alt="리워드" class="flow-card-image">
+		      <div class="flow-card-text"><span>2,000원</span> 적립!</div>
+		    </div>
+		  </div>
+		</div>
+
     <!-- STEP 1 -->
-    <div class="step-card open">
-      <div class="step-header" >
+    <div class="step-card">
+      <div class="step-header">
         <div class="step-number">1</div>
         <div class="step-title">
           <h3>쿠폰 수령 및 확인</h3>
           <p>쿠폰 받으면 바로 확인!</p>
         </div>
-        <div class="step-toggle">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
-        </div>
       </div>
       <div class="step-content">
-        <p>선정 안내 메시지를 받은 후 <strong><br>영업일 기준 2~3일 내</strong>에 쿠폰이 도착해요.</p>
+        <p>참여를 확정한 후 <br><strong>영업일 기준 2~3일 내</strong>에 쿠폰이 도착해요.</p>
         
         <div class="check-list">
           <div class="check-item">
@@ -661,7 +1555,7 @@
             </div>
             <div>
               <strong>내 이름/닉네임 확인</strong>
-              <span>이 정보로 누가 전달했는지 추적돼요. <br>오타나 다른 이름이면 리워드 정산이 안 될 수 있어요!</span>
+              <span>이 정보로 누가 전달했는지 추적돼요. <br>오타가 있거나 다른 이름이 적혀있으면 <br>리워드 정산이 안 될 수 있으니 꼭 확인해주세요!</span>
             </div>
           </div>
           <div class="check-item">
@@ -672,7 +1566,7 @@
             </div>
             <div>
               <strong>QR코드 직접 스캔 테스트</strong>
-              <span>인쇄 불량으로 QR이 안 찍히면 손님도, <br> 나도 손해! 미리 테스트해보세요.</span>
+              <span>인쇄 불량으로 QR이 안 찍히면 <br>손님도, 나도 손해! 미리 테스트해보세요.</span>
             </div>
           </div>
         </div>
@@ -686,20 +1580,15 @@
 
     <!-- STEP 2 -->
     <div class="step-card">
-      <div class="step-header" >
+      <div class="step-header">
         <div class="step-number">2</div>
         <div class="step-title">
           <h3>리워드 적립 조건 ⭐</h3>
           <p>이 조건 꼭 알아두세요!</p>
         </div>
-        <div class="step-toggle">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
-        </div>
       </div>
       <div class="step-content">
-        <p>쿠폰 전달한다고 무조건 리워드가 쌓이는 건 아니에요!</p>
+        <p>쿠폰을 전달만 해서 <br>무조건 리워드가 쌓이는 건 아니에요!</p>
         
         <div class="condition-flow">
           <span class="condition-step">패스오더 신규 손님</span>
@@ -720,7 +1609,7 @@
             </div>
             <div>
               <strong>패스오더 주문 이력이 없는 손님</strong>
-              <span>기존에 패스오더를 통해 주문한 이력이 없는 손님이어야 해요</span>
+              <span>기존에 패스오더를 통해 <br>주문한 이력이 없는 손님이어야 해요</span>
             </div>
           </div>
           <div class="check-item">
@@ -751,46 +1640,46 @@
           <div class="important-box-title">
             <span>⚠️</span> 꼭 기억해주세요!
           </div>
-          <p>손님이 QR 찍고 <span class="highlight">30일 이내</span>에 첫 주문해야 <br>성과로 인정돼요!</p>
+          <p>손님이 QR 찍고 <span class="highlight">30일 이내</span>에 <br>첫 주문해야 성과로 인정돼요!</p>
         </div>
 
         <div class="important-box">
           <div class="important-box-title">
-            <span>📅</span> 12월 챌린지 기간
+            <span>📅</span> 1월 챌린지 기간
           </div>
-          <p><strong>12/11 ~ 1/7</strong><br>반응이 좋아 <span class="highlight">1/7</span>까지 연장되었어요!</p>
+          <p><strong>1/8 ~ 2/4</strong></p>
         </div>
 
         <div class="faq-section">
           <div class="faq-section-title">💬 자주 묻는 질문</div>
 
-          <div class="faq-item" >
+          <div class="faq-item">
             <div class="faq-q">
               <span class="badge">Q</span>
               손님이 "이미 패스오더 쓰고 있어요"라고 하면?
             </div>
             <div class="faq-a">
-              "혹시 주변에 패스오더 안 쓰시는 분 계시면 전달해주세요!" 하고 쿠폰 드려도 좋아요. 그분이 첫 주문하면 2,000원 받을 수 있어요! 😊
+              "혹시 주변에 패스오더 안 쓰시는 분 계시면 <br>전달해주세요!" 하고 쿠폰 드려도 좋아요. <br>그분이 첫 주문하면 2,000원 받을 수 있어요! 😊
             </div>
           </div>
 
-          <div class="faq-item" >
+          <div class="faq-item">
             <div class="faq-q">
               <span class="badge">Q</span>
               하루에 몇 명까지 가능해요?
             </div>
             <div class="faq-a">
-              하루 제한은 없어요! <br>대신 12월 챌린지 한정 최대 300명까지 제한이 있어요. <br>한 달이면 <strong>최대 60만원</strong>까지 추가로 벌 수 있어요!
+              하루 제한은 없어요! <br>대신 1월 챌린지 한정 최대 300명까지 제한이 있어요. <br>한 달이면 <strong>최대 60만원</strong>까지 추가로 벌 수 있어요!
             </div>
           </div>
 
-          <div class="faq-item" >
+          <div class="faq-item">
             <div class="faq-q">
               <span class="badge">Q</span>
-              1/7 이후 전환된 건도 정산 받을 수 있나요?
+              2/4 이후 전환된 건도 정산 받을 수 있나요?
             </div>
             <div class="faq-a">
-              네! 1/7까지 전달한 쿠폰으로 발생한 전환은 1회차 추가 정산까지 진행해드려요.
+              네! 2/4까지 전달한 쿠폰으로 발생한 전환은 <br>1회차 추가 정산까지 진행해드려요.
             </div>
           </div>
         </div>
@@ -799,16 +1688,11 @@
 
     <!-- STEP 3 -->
     <div class="step-card">
-      <div class="step-header" >
+      <div class="step-header">
         <div class="step-number">3</div>
         <div class="step-title">
           <h3>쿠폰 전달하기</h3>
           <p>자연스럽게 전달하는 꿀팁!</p>
-        </div>
-        <div class="step-toggle">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
         </div>
       </div>
       <div class="step-content">
@@ -816,27 +1700,27 @@
           <div class="important-box-title">
             <span>🕐</span> 베스트 타이밍
           </div>
-          <p><strong>음료 건네줄 때!</strong><br> 음료랑 같이 쿠폰 건네면 끝! <br>특히 아메리카노 주문 손님에게 적극 어필해보세요!</p>
+          <p><strong>음료 건네줄 때!</strong> <br>음료랑 같이 쿠폰 건네면 끝! <br>특히 아메리카노 주문 손님에게 적극 어필해보세요!</p>
         </div>
 
-        <h4 style="font-size: 15px; margin: 20px 0 12px; font-weight: 700;">💡 이렇게 말해보세요</h4>
+        <h4 style="font-size: 14px; margin: 18px 0 10px; font-weight: 700;">💡 이렇게 말해보세요</h4>
         
         <div class="comparison">
           <div class="comparison-item bad">
             <p class="emoji">❌</p>
-            <p>"할인쿠폰 <br> 드릴게요"</p>
+            <p>"할인쿠폰 <br>드릴게요"</p>
           </div>
           <div class="comparison-item good">
             <p class="emoji">✅</p>
-            <p>"제가 <br>특별히 드리는<br>혜택이에요"</p>
+            <p>"제가 특별히 드리는 <br>혜택이에요"</p>
           </div>
         </div>
 
         <div class="script-box">
-          <p>"다음에 오실 때, <strong><br>QR 찍고 앱으로 주문하시면 아메리카노 100원</strong>이에요!<br>손님이 첫 주문하시면 저도 2,000원 리워드를 받을 수 있어요"</p>
+          <p>"다음에 오실 때, <br><strong>QR 찍고 앱으로 주문하시면 아메리카노 100원</strong>이에요! 손님이 첫 주문하시면 저도 2,000원 리워드를 받을 수 있어요.<br>쿠폰 수량이 정해져 있어서, <strong>선착순으로 혜택 받으실 수 있어요!"</strong></p>
         </div>
 
-        <h4 style="font-size: 15px; margin: 24px 0 12px; font-weight: 700;">📱 손님 사용 방법</h4>
+        <h4 style="font-size: 14px; margin: 20px 0 10px; font-weight: 700;">📱 손님 사용 방법</h4>
         
         <div class="flow-steps">
           <div class="flow-step">
@@ -863,8 +1747,8 @@
           <div class="flow-step">
             <div class="flow-step-num">4</div>
             <div class="flow-step-content">
-              <strong>앱 설치 & 가입</strong>
-              <span>이미 앱 설치&amp;가입 되어있으면 바로 5번으로!</span>
+              <strong>앱 설치 &amp; 가입</strong>
+              <span>이미 앱 설치&가입 되어있으면 바로 5번으로!</span>
             </div>
           </div>
           <div class="flow-step">
@@ -876,39 +1760,35 @@
           </div>
         </div>
 
-        <h4 style="font-size: 15px; margin: 24px 0 12px; font-weight: 700;">📋 손님 질문 대응 가이드</h4>
+        <h4 style="font-size: 14px; margin: 20px 0 10px; font-weight: 700;">📋 손님 질문 대응 가이드</h4>
         
         <div class="guide-table">
           <div class="guide-row">
-            <div class="guide-q">패스오더가 <br>뭐예요?</div>
+            <div class="guide-q">패스오더가 뭐예요?</div>
             <div class="guide-a">앱으로 미리 주문하면 줄 안 서고 금방 픽업할 수 있는 서비스예요</div>
           </div>
           <div class="guide-row">
-            <div class="guide-q">아메리카노 <br>100원이요?</div>
+            <div class="guide-q">아메리카노 100원이요?</div>
             <div class="guide-a">쿠폰 QR 찍고, 앱으로 첫 주문하시면 아메리카노 100원에 드실 수 있어요</div>
           </div>
           <div class="guide-row">
-            <div class="guide-q">다른 혜택도 <br>있어요?</div>
+            <div class="guide-q">다른 혜택도 있어요?</div>
             <div class="guide-a">아메리카노 100원 쿠폰 사용 후, 전 메뉴 1,500원 할인쿠폰 추가 증정해요!</div>
           </div>
           <div class="guide-row">
-            <div class="guide-q">기한은 <br>언제까지인가요?</div>
+            <div class="guide-q">기한은 언제까지?</div>
             <div class="guide-a">쿠폰 수량이 한정적이기에, 다음 주문 시에 바로 사용해주시면 좋아요!</div>
           </div>
           <div class="guide-row">
             <div class="guide-q">왜 권유하는 거예요?</div>
             <div class="guide-a">손님이 첫 주문하시면 저도 2,000원 리워드를 받을 수 있어요 😊</div>
           </div>
-          <div class="guide-row">
-            <div class="guide-q">손님은 어떻게 사용해요?</div>
-            <div class="guide-a">QR 스캔 → 페이지 맨 아래 버튼 클릭 → 앱 설치 → 가입 → 첫 주문<br>앱 설치, 가입이 이미 되어있는 손님에게는 '첫 주문'을 할 수 있도록 안내해주세요!</div>
-          </div>
         </div>
 
         <div class="faq-section">
           <div class="faq-section-title">💬 자주 묻는 질문</div>
 
-          <div class="faq-item" >
+          <div class="faq-item">
             <div class="faq-q">
               <span class="badge">Q</span>
               사장님이 뭐라고 하시진 않을까요?
@@ -918,17 +1798,7 @@
             </div>
           </div>
 
-          <div class="faq-item" >
-            <div class="faq-q">
-              <span class="badge">Q</span>
-              QR 찍었는데 앱이 바로 안 깔린다고 해요
-            </div>
-            <div class="faq-a">
-              QR 찍으면 먼저 웹페이지가 떠요! <br>"페이지 맨 아래 버튼 눌러보세요~" 라고 안내해주시면 앱스토어로 이동합니다 😊
-            </div>
-          </div>
-
-          <div class="faq-item" >
+          <div class="faq-item">
             <div class="faq-q">
               <span class="badge">Q</span>
               쿠폰이 모자라면 어떻게 하나요?
@@ -938,7 +1808,7 @@
             </div>
           </div>
 
-          <a href="https://passorder.kr/add_coupon" class="contact-btn primary" style="margin-top: 16px; text-decoration: none;">
+          <a href="https://passorder.kr/add_coupon" class="contact-btn primary" style="margin-top: 12px; text-decoration: none;">
             <span>📦</span> 쿠폰 추가 신청하기
           </a>
         </div>
@@ -947,16 +1817,11 @@
 
     <!-- STEP 4 -->
     <div class="step-card">
-      <div class="step-header" >
+      <div class="step-header">
         <div class="step-number">4</div>
         <div class="step-title">
           <h3>현금 정산 안내</h3>
           <p>매월 지정된 일자에 지급!</p>
-        </div>
-        <div class="step-toggle">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
         </div>
       </div>
       <div class="step-content">
@@ -967,7 +1832,7 @@
           </div>
           <div class="info-row">
             <div class="info-label">정산 기준</div>
-            <div class="info-value">직전 정산일 ~ 이번 정산일 전날<br>까지 발생한 성과</div>
+            <div class="info-value">직전 정산일 ~ 이번 정산일 전날까지 발생한 성과</div>
           </div>
           <div class="info-row">
             <div class="info-label">정산 형태</div>
@@ -979,29 +1844,29 @@
           <div class="important-box-title">
             <span>⚠️</span> 꼭 기억해주세요!
           </div>
-          <p>최초 정산 시 정산 정보(계좌번호 등)를 입력해주셔야 이후 정산도 원활하게 진행됩니다.</p>
+          <p>해당 가이드 페이지에서 <br>'리워드 정산 정보 (계좌번호 등)'를 입력해주셔야 <br>이후 정산도 원활하게 진행됩니다.</p>
         </div>
 
         <div class="faq-section">
           <div class="faq-section-title">💬 자주 묻는 질문</div>
 
-          <div class="faq-item" >
+          <div class="faq-item">
             <div class="faq-q">
               <span class="badge">Q</span>
               내 전환 실적은 어떻게 확인해요?
             </div>
             <div class="faq-a">
-              일주일에 2~3번 정도 현재 실적 안내 메시지를 보내드려요! 따로 확인하실 필요 없이, 메시지 오면 바로 보실 수 있어요. 추후에는 실시간 확인 기능도 준비 중이에요! 😊
+              정산일 하루 전, 정산 예정인 기간 동안의 <br>실적 안내 메시지를 보내드려요! <br>따로 확인하실 필요 없이, 메시지 오면 바로 보실 수 있어요.
             </div>
           </div>
 
-          <div class="faq-item" >
+          <div class="faq-item">
             <div class="faq-q">
               <span class="badge">Q</span>
               계좌는 언제 알려드려야 해요?
             </div>
             <div class="faq-a">
-              실적 안내 메시지 (카카오톡)에서 정산 정보 입력을 요청드려요! 최초 정산 시 정산 정보(계좌번호 등)를 입력해주셔야 이후 정산도 원활하게 진행되는 점 꼭 기억해주세요.
+              하단의 "리워드 정산 정보 입력하기" 버튼을 눌러 <br>지금 바로 입력해주세요! <br>정보 입력이 완료되어야 참여가 확정됩니다.
             </div>
           </div>
         </div>
@@ -1009,33 +1874,554 @@
     </div>
 
     <!-- Contact -->
-    <div class="contact-section">
-      <h3>📞 궁금한 내용은 <br> 아래 채널을 통해 문의해주세요!</h3>
-      <div class="contact-buttons">
-        <a href="https://passorder.kr/e2zIF3ai" class="contact-btn primary">
-          <span>📝</span> 문의 채널에 남기기
-        </a>
-        <a href="https://passorder.kr/NabSZFl1" class="contact-btn kakao">
-          <span>💬</span> 1:1 문의하기
-        </a>
+
+	<div class="contact-section">
+	  <h3>📞 궁금한 내용은<br>아래 채널을 통해 문의해주세요!</h3>
+	
+	  <div class="contact-buttons">
+	    <a href="https://여기에-문의채널-링크" class="contact-btn primary">
+	      <span>📝</span> 문의 채널에 남기기
+	    </a>
+	
+	    <a href="https://여기에-1대1-링크" class="contact-btn kakao">
+	      <span>💬</span> 1:1 문의하기
+	    </a>
+	
+	    <!-- ✅ 추가: 문자 문의 박스 (클릭 없음) -->
+	    <div class="contact-info-box">
+	      <div class="title">📩 문자 문의</div>
+	      <div class="phone">010-8436-5209</div>
+	      <div class="note">※ 전화 불가, 문자로만 문의 및 안내 가능합니다</div>
+	    </div>
+	  </div>
+	
+	  <p class="contact-time">운영시간: 평일 10:00 ~ 18:00</p>
+	</div>
+  </div>
+
+  <!-- ========== 하단 고정 CTA ========== -->
+
+  <div class="footer-cta">
+    <button onclick="openFormPopup()" class="btn-main">
+      <span class="coin left">💰</span>
+      리워드 정산 정보 입력하기
+      <span class="coin right">💰</span>
+    </button>
+  </div>
+
+  <!-- ========== 바텀시트 폼 팝업 ========== -->
+  <div id="form-overlay" class="form-overlay">
+    <div class="form-container">
+      <div class="form-handle"></div>
+      
+      <!-- 폼 영역 -->
+      <div id="form-area">
+        <div class="form-header">
+          <h2>리워드 정산 정보를<br>입력해주세요</h2>
+          <p>정산 정보 입력이 완료되어야 참여가 확정됩니다</p>
+        </div>
+
+        <form id="settlement-form">
+          <input type="hidden" id="alba_id" name="alba_id">
+          <input type="hidden" id="entry_time" name="entry_time">
+          
+          <div class="form-group">
+            <label>매장명 <span class="required">*</span></label>
+            <input type="text" id="store_name" name="store_name" required placeholder="예: 컴포즈커피 강남점">
+          </div>
+
+          <div class="form-group">
+            <label>연락처 <span class="required">*</span></label>
+            <input type="tel" id="phone" name="phone" required placeholder="010-0000-0000" maxlength="13">
+          </div>
+
+          <!-- 12월 챌린지 동일 체크박스 -->
+          <div class="checkbox-option checkbox-yellow">
+            <label class="checkbox-label">
+              <input type="checkbox" id="same_as_december" name="same_as_december">
+              <span>12월 챌린지 참여 시 입력했던 리워드 정산 정보와 동일합니다<br><small style="color: var(--gray-500);">(12월 챌린지 참여자 한정 클릭)</small></span>
+            </label>
+          </div>
+
+          <!-- 정산 정보 영역 -->
+          <div id="bank-info-section">
+            <div class="form-group">
+              <label>은행 <span class="required bank-required">*</span></label>
+              <!-- 커스텀 드롭다운 -->
+							<div class="custom-select-wrapper" id="bank-select-wrapper">
+							  <div class="custom-select-trigger" id="bank-trigger" tabindex="0">
+							    <span class="placeholder" id="bank-display">은행을 선택해주세요</span>
+							    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							      <polyline points="6 9 12 15 18 9"></polyline>
+							    </svg>
+							  </div>
+							  <div class="custom-select-dropdown" id="bank-dropdown">
+							    <div class="custom-select-option" data-value="카카오뱅크">카카오뱅크</div>
+							    <div class="custom-select-option" data-value="토스뱅크">토스뱅크</div>
+							    <div class="custom-select-option" data-value="국민은행">국민은행</div>
+							    <div class="custom-select-option" data-value="신한은행">신한은행</div>
+							    <div class="custom-select-option" data-value="우리은행">우리은행</div>
+							    <div class="custom-select-option" data-value="하나은행">하나은행</div>
+							    <div class="custom-select-option" data-value="농협은행">농협은행</div>
+									<div class="custom-select-option" data-value="NH농협">NH농협</div>
+							    <div class="custom-select-option" data-value="농협중앙회">농협중앙회</div>
+							    <div class="custom-select-option" data-value="기업은행">기업은행</div>
+							    <div class="custom-select-option" data-value="새마을금고">새마을금고</div>
+							    <div class="custom-select-option" data-value="우체국">우체국</div>
+							    <div class="custom-select-option" data-value="케이뱅크">케이뱅크</div>
+							    <div class="custom-select-option" data-value="수협은행">수협은행</div>
+							    <div class="custom-select-option" data-value="신협">신협</div>
+							    <div class="custom-select-option" data-value="SC제일은행">SC제일은행</div>
+							    <div class="custom-select-option" data-value="씨티은행">씨티은행</div>
+							    <div class="custom-select-option highlight" data-value="기타">직접 입력</div>
+							  </div>
+							</div>
+
+							<!-- 숨겨진 실제 select (폼 제출용) -->
+							<select id="bank" name="bank" required class="hidden-select">
+							  <option value="">은행을 선택해주세요</option>
+							  <option value="카카오뱅크">카카오뱅크</option>
+							  <option value="토스뱅크">토스뱅크</option>
+							  <option value="국민은행">국민은행</option>
+							  <option value="신한은행">신한은행</option>
+							  <option value="우리은행">우리은행</option>
+							  <option value="하나은행">하나은행</option>
+							  <option value="농협은행">농협은행</option>
+							  <option value="NH농협">NH농협</option>
+							  <option value="농협중앙회">농협중앙회</option>
+							  <option value="기업은행">기업은행</option>
+							  <option value="새마을금고">새마을금고</option>
+							  <option value="우체국">우체국</option>
+							  <option value="케이뱅크">케이뱅크</option>
+							  <option value="수협은행">수협은행</option>
+							  <option value="신협">신협</option>
+							  <option value="SC제일은행">SC제일은행</option>
+							  <option value="씨티은행">씨티은행</option>
+							  <option value="기타">직접 입력</option>
+							</select>
+
+							<!-- 기타 은행 직접 입력 -->
+							<input type="text" id="bank_other" name="bank_other" class="bank-other-input" placeholder="은행명을 입력해주세요">
+            </div>
+
+            <div class="form-group">
+              <label>예금주 <span class="required bank-required">*</span></label>
+              <input type="text" id="account_holder" name="account_holder" required placeholder="예: 홍길동">
+            </div>
+
+            <div class="form-group">
+              <label>계좌번호 <span class="required bank-required">*</span></label>
+              <input type="text" id="account_number" name="account_number" required placeholder="">
+            </div>
+          </div>
+
+          <!-- 추가 쿠폰 필요 체크박스 -->
+          <div class="checkbox-option checkbox-yellow">
+            <label class="checkbox-label">
+              <input type="checkbox" id="need_extra_coupon" name="need_extra_coupon">
+              <span>1월 참여를 위해 추가 쿠폰이 필요합니다<br><small style="color: var(--gray-500);">(12월 챌린지 참여자 한정 클릭)</small></span>
+            </label>
+          </div>
+
+          <!-- 주소 입력 영역 (숨김) -->
+          <div id="address-section" style="display: none;">
+            <div class="form-group">
+              <label>배송 주소</label>
+              <p class="checkbox-hint" style="margin-left: 0; margin-bottom: 10px;">12월 챌린지 참여 시 입력한 주소와 달라진 경우에만 작성해주세요</p>
+              <div class="address-row">
+                <input type="text" id="zipcode" name="zipcode" readonly placeholder="우편번호">
+                <button type="button" class="address-btn" onclick="execDaumPostcode(event); return false;">주소 검색</button>
+              </div>
+              <input type="text" id="address" name="address" readonly placeholder="기본 주소" style="margin-top: 8px;">
+              <input type="text" id="address_detail" name="address_detail" placeholder="상세 주소를 입력해주세요" style="margin-top: 8px;">
+              
+              <!-- 주소 검색 임베드 영역 -->
+              <div id="address-embed-wrap" style="display: none; margin-top: 12px; border: 1px solid var(--gray-300); border-radius: 8px; overflow: hidden;">
+                <div id="address-embed" style="width: 100%; height: 400px;"></div>
+                <button type="button" onclick="closeAddressEmbed()" style="width: 100%; padding: 12px; background: var(--gray-100); border: none; border-top: 1px solid var(--gray-300); font-size: 14px; color: var(--gray-600); cursor: pointer;">닫기</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 개인정보 수집 동의 -->
+          <div class="privacy-section">
+            <label class="checkbox-label">
+              <input type="checkbox" id="agreement" name="agreement" required>
+              <span class="privacy-title" onclick="togglePrivacy(event)">
+                <span class="required-badge">[필수]</span>
+                <span class="underline">개인정보 수집 및 이용 동의</span>
+                <span id="privacy-arrow" class="arrow">▼</span>
+              </span>
+            </label>
+            
+            <div id="privacy-content" class="privacy-content hidden">
+              <p class="privacy-intro">본 개인정보 수집 및 이용은 패스오더 개인정보 처리방침에 따릅니다.</p>
+              
+              <div class="privacy-item">
+                <p class="privacy-item-title">수집하는 개인정보 항목</p>
+                <table class="privacy-table">
+                  <tr>
+                    <td class="label-cell">수집 항목</td>
+                    <td>연락처(휴대전화번호), 이름, 은행명, 계좌번호</td>
+                  </tr>
+                  <tr>
+                    <td class="label-cell">수집 방법</td>
+                    <td>패스오더 [시급 2배 챌린지] 참여 안내 페이지</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <div class="privacy-item">
+                <p class="privacy-item-title">개인정보의 수집 및 이용 목적</p>
+                <ul class="privacy-list">
+                  <li>패스오더 [시급 2배 챌린지] 안내 발송</li>
+                  <li>패스오더 [시급 2배 챌린지] 리워드 지급</li>
+                  <li>서비스 관련 공지사항 및 업데이트 안내</li>
+                  <li>프로모션, 이벤트, 혜택 정보 안내</li>
+                  <li>서비스 이용 관련 문의 응대 및 고객 지원</li>
+                  <li>서비스 개선을 위한 통계 분석 (비식별 처리)</li>
+                </ul>
+              </div>
+              
+              <div class="privacy-item">
+                <p class="privacy-item-title">개인정보의 보유 및 이용 기간</p>
+                <table class="privacy-table">
+                  <tr>
+                    <td class="label-cell">보유 기간</td>
+                    <td>수집일로부터 1년 또는 동의 철회 시까지</td>
+                  </tr>
+                  <tr>
+                    <td class="label-cell">파기 방법</td>
+                    <td>보유 기간 경과 후 지체 없이 파기</td>
+                  </tr>
+                </table>
+                <p class="privacy-note">※ 단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 법령에서 정한 기간 동안 보관됩니다.</p>
+              </div>
+              
+              <div class="privacy-item">
+                <p class="privacy-item-title">개인정보의 제3자 제공</p>
+                <div class="privacy-box">
+                  <p>수집된 개인정보는 원칙적으로 제3자에게 제공하지 않습니다. 다만, 아래의 경우에는 예외로 합니다.</p>
+                  <ul class="privacy-list">
+                    <li>이용자가 사전에 동의한 경우</li>
+                    <li>법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div class="privacy-item">
+                <p class="privacy-item-title">동의 거부권 및 불이익 안내</p>
+                <div class="privacy-box">
+                  <p>귀하는 개인정보 수집 및 이용에 대한 동의를 거부할 권리가 있습니다. 다만, 동의를 거부하실 경우 패스오더 [시급 2배 챌린지] 참여가 제한될 수 있습니다.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn-submit">참여 확정하기</button>
+          <button type="button" onclick="closeFormPopup()" class="btn-cancel">다음에 하기</button>
+        </form>
       </div>
-      <p class="contact-time">운영시간: 평일 10:00 ~ 18:00</p>
+
+      <!-- 제출 완료 -->
+      <div id="submit-success" class="submit-success">
+        <div class="icon">🎉</div>
+        <h3>정산 정보 등록 완료!</h3>
+        <p>이제 영업일 3~4일 내로 <br>손님 전달용 쿠폰이 배송될 예정이에요!</p>
+        <button onclick="closeFormPopup()" class="btn-close-success">확인</button>
+      </div>
     </div>
   </div>
 
   <script>
-    function toggleStep(header) {
-      const card = header.closest('.step-card');
-      card.classList.toggle('open');
+    // ========== 설정 ==========
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwD37g76PRYzWuShd3YxDoq_Rtz5ej_xDM-bm2IRK1mZjl68J6h1Oiez89VIG8HN5al/exec';
+    
+    // alba_id → 닉네임 매핑
+    const NICKNAME_MAP = {
+      '001': '민수',
+      '002': '지영',
+      // 여기에 alba_id: 닉네임 형태로 추가
+    };
+
+    // ========== 한국 시간 함수 ==========
+    function getKoreanTime() {
+      return new Date().toLocaleString('ko-KR');
     }
 
-    function toggleFaq(item) {
-      item.classList.toggle('open');
+    // ========== URL 파라미터 ==========
+    const params = new URLSearchParams(window.location.search);
+    const albaId = params.get('alba_id') || 'unknown';
+    const entryTime = getKoreanTime();
+
+    // 히든 필드 설정
+    document.getElementById('alba_id').value = albaId;
+    document.getElementById('entry_time').value = entryTime;
+
+    // ========== 페이지 접속 로그 (GET) ==========
+    const logParams = new URLSearchParams({
+      alba_id: albaId,
+      user_agent: navigator.userAgent,
+      referrer: document.referrer || 'direct'
+    });
+    fetch(GAS_URL + '?' + logParams.toString(), { mode: 'no-cors' });
+
+    // ========== 개인화: 닉네임 표시 ==========
+    if (albaId !== 'unknown' && NICKNAME_MAP[albaId]) {
+      const nickname = NICKNAME_MAP[albaId];
+      const welcomeEl = document.getElementById('welcome-name');
+      welcomeEl.textContent = nickname + '님, 안녕하세요! 👋';
+      welcomeEl.style.display = 'block';
     }
 
-    // 첫 번째 스텝 자동 열기
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelector('.step-card').classList.add('open');
+    // ========== 안내 팝업 닫기 ==========
+    function closeIntro() {
+      document.getElementById('intro-overlay').classList.add('hidden');
+    }
+
+    // ========== 폼 팝업 열기/닫기 ==========
+    function openFormPopup() {
+      document.getElementById('form-overlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFormPopup() {
+      document.getElementById('form-overlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    // 배경 클릭 시 닫기
+    document.getElementById('form-overlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeFormPopup();
+      }
+    });
+
+    // ========== 전화번호 자동 하이픈 ==========
+    document.getElementById('phone').addEventListener('input', function(e) {
+      let v = e.target.value.replace(/[^0-9]/g, '');
+      if (v.length <= 3) {
+        e.target.value = v;
+      } else if (v.length <= 7) {
+        e.target.value = v.slice(0, 3) + '-' + v.slice(3);
+      } else {
+        e.target.value = v.slice(0, 3) + '-' + v.slice(3, 7) + '-' + v.slice(7, 11);
+      }
+    });
+
+    // ========== 계좌번호 숫자만 ==========
+    document.getElementById('account_number').addEventListener('input', function(e) {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+
+		// ========== 커스텀 드롭다운 ==========
+		const bankTrigger = document.getElementById('bank-trigger');
+		const bankDropdown = document.getElementById('bank-dropdown');
+		const bankDisplay = document.getElementById('bank-display');
+		const bankSelect = document.getElementById('bank');
+		const bankOtherInput = document.getElementById('bank_other');
+		const bankOptions = bankDropdown.querySelectorAll('.custom-select-option');
+		
+		// 드롭다운 토글
+		bankTrigger.addEventListener('click', function(e) {
+		  e.preventDefault();
+		  e.stopPropagation();
+		  const isOpen = bankDropdown.classList.contains('show');
+  
+		  if (isOpen) {
+		    closeBankDropdown();
+		  } else {
+		    openBankDropdown();
+		  }
+		});
+
+		function openBankDropdown() {
+		  bankDropdown.classList.add('show');
+		  bankTrigger.classList.add('active');
+		}
+
+		function closeBankDropdown() {
+		  bankDropdown.classList.remove('show');
+		  bankTrigger.classList.remove('active');
+		}
+
+		// 옵션 선택
+		bankOptions.forEach(option => {
+		  option.addEventListener('click', function(e) {
+		    e.preventDefault();
+		    e.stopPropagation();
+    
+		    const value = this.dataset.value;
+		    const text = this.textContent;
+    
+		    // 선택 상태 표시
+		    bankOptions.forEach(opt => opt.classList.remove('selected'));
+		    this.classList.add('selected');
+    
+		    // 표시 텍스트 변경
+		    bankDisplay.textContent = text;
+		    bankDisplay.classList.remove('placeholder');
+		    bankDisplay.classList.add('selected-value');
+    
+		    // 실제 select 값 변경
+		    bankSelect.value = value;
+    
+		    // 기타 선택 시 직접 입력창 표시
+		    if (value === '기타') {
+		      bankOtherInput.classList.add('show');
+		      setTimeout(() => bankOtherInput.focus(), 100);
+		    } else {
+		      bankOtherInput.classList.remove('show');
+		      bankOtherInput.value = '';
+		    }
+    
+		    closeBankDropdown();
+		  });
+		});
+
+		// 외부 클릭 시 드롭다운 닫기
+		document.addEventListener('click', function(e) {
+		  if (!e.target.closest('.custom-select-wrapper')) {
+		    closeBankDropdown();
+		  }
+		});
+
+		// ESC 키로 닫기
+		document.addEventListener('keydown', function(e) {
+		  if (e.key === 'Escape') {
+		    closeBankDropdown();
+		  }
+		});
+
+    // ========== 12월 챌린지 동일 체크박스 ==========
+    document.getElementById('same_as_december').addEventListener('change', function(e) {
+      const section = document.getElementById('bank-info-section');
+      const inputs = section.querySelectorAll('input, select');
+      const requiredMarks = document.querySelectorAll('.bank-required');
+      
+      if (e.target.checked) {
+        section.style.opacity = '0.4';
+        inputs.forEach(el => el.removeAttribute('required'));
+        requiredMarks.forEach(mark => mark.style.display = 'none');
+      } else {
+        section.style.opacity = '1';
+        document.getElementById('bank').setAttribute('required', '');
+        document.getElementById('account_holder').setAttribute('required', '');
+        document.getElementById('account_number').setAttribute('required', '');
+        requiredMarks.forEach(mark => mark.style.display = 'inline');
+      }
+    });
+
+    // ========== 추가 쿠폰 체크박스 ==========
+    document.getElementById('need_extra_coupon').addEventListener('change', function(e) {
+      document.getElementById('address-section').style.display = e.target.checked ? 'block' : 'none';
+    });
+
+    // ========== 다음 주소 API (임베드 방식) ==========
+    function execDaumPostcode(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      if (typeof daum === 'undefined' || typeof daum.Postcode === 'undefined') {
+        alert('주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+        return false;
+      }
+      
+      // 임베드 영역 표시
+      const embedWrap = document.getElementById('address-embed-wrap');
+      const embedContainer = document.getElementById('address-embed');
+      
+      embedWrap.style.display = 'block';
+      embedContainer.innerHTML = ''; // 기존 내용 초기화
+      
+      new daum.Postcode({
+        oncomplete: function(data) {
+          document.getElementById('zipcode').value = data.zonecode;
+          document.getElementById('address').value = data.roadAddress || data.jibunAddress;
+          
+          // 임베드 영역 숨기기
+          embedWrap.style.display = 'none';
+          
+          document.getElementById('address_detail').focus();
+        },
+        onclose: function() {
+          embedWrap.style.display = 'none';
+        },
+        width: '100%',
+        height: '100%'
+      }).embed(embedContainer);
+      
+      // 임베드 영역으로 스크롤
+      embedWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      return false;
+    }
+    
+    // 주소 검색 임베드 닫기
+    function closeAddressEmbed() {
+      document.getElementById('address-embed-wrap').style.display = 'none';
+    }
+
+    // ========== 개인정보 동의 토글 ==========
+    function togglePrivacy(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const content = document.getElementById('privacy-content');
+      const arrow = document.getElementById('privacy-arrow');
+      
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        arrow.textContent = '▲';
+      } else {
+        content.classList.add('hidden');
+        arrow.textContent = '▼';
+      }
+    }
+
+    // ========== 폼 제출 ==========
+    document.getElementById('settlement-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // 은행이 '기타'일 경우 직접 입력값 확인
+      const bankValue = document.getElementById('bank').value;
+      if (bankValue === '기타' && !document.getElementById('same_as_december').checked) {
+        const bankOther = document.getElementById('bank_other').value;
+        if (!bankOther) {
+          alert('은행명을 입력해주세요.');
+          return;
+        }
+      }
+      
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = '등록 중...';
+      
+      const formData = new FormData(this);
+      formData.append('submit_time', getKoreanTime());
+      
+      // 은행이 '기타'인 경우 직접 입력값 사용
+      if (bankValue === '기타') {
+        formData.set('bank', document.getElementById('bank_other').value);
+      }
+      
+      // 체크박스 값 처리
+      formData.set('need_extra_coupon', document.getElementById('need_extra_coupon').checked ? 'on' : 'off');
+      
+      fetch(GAS_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors'
+      }).then(() => {
+        document.getElementById('form-area').style.display = 'none';
+        document.getElementById('submit-success').classList.add('show');
+      }).catch(err => {
+        alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
+        btn.disabled = false;
+        btn.textContent = '등록 완료';
+      });
     });
   </script>
 </body>
