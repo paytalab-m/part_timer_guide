@@ -2473,6 +2473,38 @@
         btn.textContent = '등록 완료';
       });
     });
+
+	  // ================================
+	  // 📜 가이드 스크롤 깊이 추적 이벤트
+	  // (25%, 50%, 75%, 100% 도달 시 1회 기록)
+	  // ================================
+	  const scrollMarks = { 25: false, 50: false, 75: false, 100: false };
+	
+	  function sendScrollEvent(percent) {
+	    const fd = new FormData();
+	    fd.append('event_name', 'scroll_' + percent);
+	    fd.append('alba_id', albaId);
+	    fd.append('event_time', getKoreanTime());
+	    fd.append('event_value', percent + '%');
+	
+	    fetch(GAS_URL, {
+	      method: 'POST',
+	      body: fd,
+	      mode: 'no-cors'
+	    });
+	  }
+	
+	  window.addEventListener('scroll', () => {
+	    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+	    if (docHeight <= 0) return;
+	
+	    const scrolled = Math.round((window.scrollY / docHeight) * 100);
+	
+	    if (scrolled >= 25 && !scrollMarks[25]) { scrollMarks[25] = true; sendScrollEvent(25); }
+	    if (scrolled >= 50 && !scrollMarks[50]) { scrollMarks[50] = true; sendScrollEvent(50); }
+	    if (scrolled >= 75 && !scrollMarks[75]) { scrollMarks[75] = true; sendScrollEvent(75); }
+	    if (scrolled >= 95 && !scrollMarks[100]) { scrollMarks[100] = true; sendScrollEvent(100); }
+	  });
   </script>
 </body>
 </html>
