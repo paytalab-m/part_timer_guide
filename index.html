@@ -1879,11 +1879,11 @@
 	  <h3>📞 궁금한 내용은<br>아래 채널을 통해 문의해주세요!</h3>
 	
 	  <div class="contact-buttons">
-	    <a href="https://여기에-문의채널-링크" class="contact-btn primary">
+	    <a href="https://passorder.kr/e2zIF3ai" class="contact-btn primary">
 	      <span>📝</span> 문의 채널에 남기기
 	    </a>
 	
-	    <a href="https://여기에-1대1-링크" class="contact-btn kakao">
+	    <a href="https://passorder.kr/NabSZFl1" class="contact-btn kakao">
 	      <span>💬</span> 1:1 문의하기
 	    </a>
 	
@@ -2135,7 +2135,34 @@
 
   <script>
     // ========== 설정 ==========
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwD37g76PRYzWuShd3YxDoq_Rtz5ej_xDM-bm2IRK1mZjl68J6h1Oiez89VIG8HN5al/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbx0x3fRxK4CTHeKjg2k8dX1OBb7iCUESd92HL7Pm2ZJRTZM6iV7t1ChQkeKlijmA7I/exec';
+
+	// ========== 이벤트 로깅(POST) ==========
+	function trackEvent(eventName, extra = {}) {
+	  try {
+	    const payload = new URLSearchParams({
+	      event_name: eventName,
+	      alba_id: albaId,                      // 아래에서 선언되는 albaId 사용
+	      event_time: getKoreanTime(),
+	      page_url: location.href,
+	      referrer: document.referrer || 'direct',
+	      user_agent: navigator.userAgent,
+	      ...extra
+	    });
+	
+	    fetch(GAS_URL, {
+	      method: 'POST',
+	      mode: 'no-cors',
+	      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+	      body: payload.toString()
+	    });
+	  } catch (err) {
+	    // 이벤트 실패는 사용자 UX에 영향 주지 않게 조용히 무시
+	    console.warn('trackEvent error', err);
+	  }
+	}
+
+
     
     // alba_id → 닉네임 매핑
     const NICKNAME_MAP = {
@@ -2165,6 +2192,7 @@
       referrer: document.referrer || 'direct'
     });
     fetch(GAS_URL + '?' + logParams.toString(), { mode: 'no-cors' });
+	trackEvent('page_view');
 
     // ========== 개인화: 닉네임 표시 ==========
     if (albaId !== 'unknown' && NICKNAME_MAP[albaId]) {
@@ -2173,22 +2201,28 @@
       welcomeEl.textContent = nickname + '님, 안녕하세요! 👋';
       welcomeEl.style.display = 'block';
     }
+	trackEvent('intro_view');
 
     // ========== 안내 팝업 닫기 ==========
     function closeIntro() {
-      document.getElementById('intro-overlay').classList.add('hidden');
-    }
+	  trackEvent('intro_close');
+	  document.getElementById('intro-overlay').classList.add('hidden');
+	}
+
 
     // ========== 폼 팝업 열기/닫기 ==========
-    function openFormPopup() {
-      document.getElementById('form-overlay').classList.add('show');
-      document.body.style.overflow = 'hidden';
-    }
+	function openFormPopup() {
+	  trackEvent('open_form');
+	  document.getElementById('form-overlay').classList.add('show');
+	  document.body.style.overflow = 'hidden';
+	}
 
-    function closeFormPopup() {
-      document.getElementById('form-overlay').classList.remove('show');
-      document.body.style.overflow = '';
-    }
+	function closeFormPopup() {
+	  trackEvent('close_form');
+	  document.getElementById('form-overlay').classList.remove('show');
+	  document.body.style.overflow = '';
+	}
+
 
     // 배경 클릭 시 닫기
     document.getElementById('form-overlay').addEventListener('click', function(e) {
@@ -2295,6 +2329,7 @@
 
     // ========== 12월 챌린지 동일 체크박스 ==========
     document.getElementById('same_as_december').addEventListener('change', function(e) {
+	  trackEvent(e.target.checked ? 'same_as_december_on' : 'same_as_december_off');
       const section = document.getElementById('bank-info-section');
       const inputs = section.querySelectorAll('input, select');
       const requiredMarks = document.querySelectorAll('.bank-required');
@@ -2314,6 +2349,7 @@
 
     // ========== 추가 쿠폰 체크박스 ==========
     document.getElementById('need_extra_coupon').addEventListener('change', function(e) {
+	  trackEvent(e.target.checked ? 'extra_coupon_on' : 'extra_coupon_off');
       document.getElementById('address-section').style.display = e.target.checked ? 'block' : 'none';
     });
 
@@ -2332,7 +2368,8 @@
       // 임베드 영역 표시
       const embedWrap = document.getElementById('address-embed-wrap');
       const embedContainer = document.getElementById('address-embed');
-      
+	  trackEvent('address_search_open');
+
       embedWrap.style.display = 'block';
       embedContainer.innerHTML = ''; // 기존 내용 초기화
       
@@ -2340,7 +2377,14 @@
         oncomplete: function(data) {
           document.getElementById('zipcode').value = data.zonecode;
           document.getElementById('address').value = data.roadAddress || data.jibunAddress;
-          
+
+		  // ✅ (6-2) 여기! 주소가 확정되어 input에 들어간 직후
+		  trackEvent('address_selected', {
+		    zipcode: data.zonecode,
+		    address: (data.roadAddress || data.jibunAddress || ''),
+		    address_type: data.userSelectedType || ''   // 'R'(도로명) / 'J'(지번) 이런 값
+		  });
+		
           // 임베드 영역 숨기기
           embedWrap.style.display = 'none';
           
@@ -2373,9 +2417,11 @@
       const arrow = document.getElementById('privacy-arrow');
       
       if (content.classList.contains('hidden')) {
+		trackEvent('privacy_open');
         content.classList.remove('hidden');
         arrow.textContent = '▲';
       } else {
+		trackEvent('privacy_close');
         content.classList.add('hidden');
         arrow.textContent = '▼';
       }
@@ -2410,14 +2456,18 @@
       // 체크박스 값 처리
       formData.set('need_extra_coupon', document.getElementById('need_extra_coupon').checked ? 'on' : 'off');
       
+	  trackEvent('submit_attempt');
+		
       fetch(GAS_URL, {
         method: 'POST',
         body: formData,
         mode: 'no-cors'
       }).then(() => {
+		trackEvent('submit_success');
         document.getElementById('form-area').style.display = 'none';
         document.getElementById('submit-success').classList.add('show');
       }).catch(err => {
+		trackEvent('submit_error', { error: String(err) });
         alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
         btn.disabled = false;
         btn.textContent = '등록 완료';
