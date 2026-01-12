@@ -1934,6 +1934,24 @@
             <label>연락처 <span class="required">*</span></label>
             <input type="tel" id="phone" name="phone" required placeholder="010-0000-0000" maxlength="13">
           </div>
+		
+		  <div class="form-group">
+		    <label>근무시간 <span class="required">*</span></label>
+		
+		    <p style="font-size: 12px; color: var(--gray-500); margin: 4px 0 10px; line-height: 1.5;">
+		    근무 요일 및 시간대를 입력해주세요. 챌린지 관련 안내를 드릴 때 참고하려고 해요!<br> 
+		    편하게 작성해주시면 됩니다 😊
+		    </p>
+		
+		    <input
+		      type="text"
+		      id="work_time"
+		      name="work_time"
+		      required
+		      placeholder="ex) 월수금 오후 2~6시 / 평일 오전 9~12시 / 주말 오후 6~11시"
+		    >
+		  </div>
+
 
           <!-- 12월 챌린지 동일 체크박스 -->
           <div class="checkbox-option checkbox-yellow">
@@ -2135,7 +2153,7 @@
 
   <script>
     // ========== 설정 ==========
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbx0x3fRxK4CTHeKjg2k8dX1OBb7iCUESd92HL7Pm2ZJRTZM6iV7t1ChQkeKlijmA7I/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbymVyXpjanYNGoaH-Ai_JYkrlXpJKK8MfkLolLjqQBK3qZ7xbmnqilySnqJqIgShH8/exec';
 
 	// ========== 이벤트 로깅(POST) ==========
 	function trackEvent(eventName, extra = {}) {
